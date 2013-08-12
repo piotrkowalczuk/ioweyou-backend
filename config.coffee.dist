@@ -1,0 +1,13 @@
+module.exports =
+  app:
+    port: 8000
+  database:
+    conString: "postgres://postgres:postgres.123@localhost/ioweyou"
+  redis:
+    host: 'localhost',
+    port: 6379,
+    db: 2,
+    pass: ''
+  facebook:
+    appId: '',
+    apiSecret: ''
