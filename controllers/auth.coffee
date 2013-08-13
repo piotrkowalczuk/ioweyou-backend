@@ -1,17 +1,9 @@
-pg = require('pg')
-redis = require("redis")
-uuid = require('node-uuid');
-request = require('request')
-
-config = require('../config')
-auth = require('../lib/auth')
-facebook = require('../lib/facebook')
-user = require('../models/user')
-
-
-#---- postgres ----
-pgClient = new pg.Client(config.database.conString)
-pgClient.connect()
+redis = require "redis"
+uuid = require 'node-uuid'
+request = require 'request'
+auth = require '../lib/auth'
+facebook = require '../lib/facebook'
+user = require '../models/user'
 
 #---- redis ----
 rClient = redis.createClient();

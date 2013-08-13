@@ -4,11 +4,12 @@
   "version": "0.0.1",
   "private": true,
   "dependencies": {
-    "express": "3.3.4",
-    "pg": "2.2.0",
-    "passport": "0.1.17",
+    "express": "3.3.x",
+    "pg": "2.2.x",
+    "passport": "0.1.x",
     "request": "*",
     "redis": "*",
-    "node-uuid": "*"
+    "node-uuid": "*",
+    "knex": "0.x"
   }
 }

@@ -2,7 +2,13 @@ module.exports =
   app:
     port: 8000
   database:
-    conString: "postgres://postgres:postgres.123@localhost/ioweyou"
+    client: 'pg',
+    connection:
+      host: '127.0.0.1',
+      user: 'postgres',
+      password: 'postgres.123',
+      database: 'ioweyou',
+      charset: 'utf8'
   redis:
     host: 'localhost',
     port: 6379,

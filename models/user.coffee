@@ -1,67 +1,61 @@
-pg = require('pg')
-config = require('../config')
-
-#---- postgres ----
-client = new pg.Client(config.database.conString)
-client.connect()
+db = require '../db'
 
 module.exports =
-  getById: (id, next) ->
-    getById(id, next)
-  getBy: (fieldName, value, next) ->
-    getBy(fieldName, value, next)
-  getFriendsByUserId: (userId, next) ->
-    getFriendsByUserId(userId, next)
+  getById: (id) ->
+    getById(id)
+  getBy: (fieldName, value) ->
+    getBy(fieldName, value)
+  getFriends: (userId) ->
+    getFriends(userId)
 
-getById = (id, next) ->
-  sql = 'SELECT au.username, au.first_name, au.last_name, au.email, sau.uid
-        FROM auth_user AS au
-        LEFT JOIN social_auth_usersocialauth AS sau ON sau.user_id = au.id
-        WHERE au.id=$1;'
+getById = (id) ->
 
-  runQuery sql, id, next
+  db()
+    .from('auth_user')
+    .select(
+      'auth_user.username',
+      'auth_user.first_name',
+      'auth_user.last_name',
+      'auth_user.email',
+      'sau.uid'
+    )
+    .join('social_auth_usersocialauth as sau', 'sau.user_id', '=', 'auth_user.id', 'left')
+    .where('auth_user.id', id)
 
-getBy = (fieldName, value, next) ->
-  getUserFields (results) ->
-    userFields = results.rows
+getBy = (fieldName, value) ->
 
-    fieldFound = false
-    for field in userFields
-      if field.field_name == fieldName
-        fieldFound = true
-        break
+  db()
+    .from('auth_user')
+    .select(
+      'auth_user.username',
+      'auth_user.first_name',
+      'auth_user.last_name',
+      'auth_user.email',
+      'social_auth_usersocialauth.uid'
+    )
+    .join('social_auth_usersocialauth', 'social_auth_usersocialauth.user_id', '=', 'auth_user.id', 'left')
+    .where('auth_user.'+fieldName, value)
 
-    throw new Error "Invalid field name" unless fieldFound
+getFriends = (id) ->
 
-    sql = 'SELECT au.username, au.first_name, au.last_name, au.email, sau.uid
-          FROM auth_user AS au
-          LEFT JOIN social_auth_usersocialauth AS sau ON sau.user_id = au.id
-          WHERE au.'+fieldName+'=$1;'
+  subQuery = db.Raw('
+    SELECT uf.creator_id AS friend
+    FROM user_friendship uf, auth_user au
+    WHERE au.id = uf.friend_id AND  au.id = '+id+'
+    UNION
+    SELECT uf.friend_id AS friend
+    FROM user_friendship uf, auth_user au
+    WHERE au.id = uf.creator_id AND  au.id = '+id
+  )
 
-    runQuery sql, [value], next
-
-getUserFields = (next) ->
-  fieldSql = 'SELECT column_name as field_name
-              FROM information_schema.columns
-              WHERE table_name=\'auth_user\';'
-  runQuery fieldSql, null, next
-
-
-getFriendsByUserId = (userId, next) ->
-  sql = 'SELECT au.first_name, au.last_name, au.username
-        FROM user_friendship as uf
-        LEFT JOIN auth_user as au ON au.id = uf.friend_id
-        WHERE creator_id=$1'
-
-  runQuery sql, [userId], next
-
-runQuery = (sql, args, next) ->
-  callback = (err, results) ->
-    if err
-      return console.error('Error running query', err)
-    next(results)
-
-  if args?
-    client.query sql, args, callback
-  else
-    client.query sql, callback
+  db()
+    .from('auth_user')
+    .select(
+      'auth_user.username',
+      'auth_user.first_name',
+      'auth_user.last_name',
+      'auth_user.email',
+      'sau.uid'
+    )
+    .whereIn('auth_user.id', subQuery)
+    .join('social_auth_usersocialauth as sau', 'sau.user_id', '=', 'auth_user.id', 'left')
