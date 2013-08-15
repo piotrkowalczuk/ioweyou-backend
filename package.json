@@ -10,6 +10,7 @@
     "request": "*",
     "redis": "*",
     "node-uuid": "*",
-    "knex": "0.x"
+    "knex": "0.x",
+    "jasmine-node": "1.11.x"
   }
 }
