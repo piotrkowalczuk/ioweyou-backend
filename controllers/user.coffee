@@ -13,12 +13,12 @@ getById = (req, res) ->
     if not error
       res.send(response)
     else
-      res.send(error)
+  res.send(error)
 
 getFriends = (req, res) ->
   userId = req.params.id
   console.log user.getFriends(userId).toString()
-  user.getFriends(userId).exec (error,response)->
+  user.getFriends(userId).exec (error,response)=>
     if not error
       res.send(response)
     else

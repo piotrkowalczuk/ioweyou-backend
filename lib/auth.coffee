@@ -1,18 +1,18 @@
-express = require('express')
-request = require('request')
-redis = require("redis")
-config = require('../config')
-
-#---- redis ----
-rClient = redis.createClient();
+express = require 'express'
+request = require 'request'
+session = require '../models/session'
+config = require '../config'
 
 module.exports =
   tokenAuth: (req, res, next) ->
-    uid = req.query.uid
-    apiToken = req.query.apiToken
+    tokenAuth(req, res, next)
 
-    rClient.get uid, (err, reply) ->
-      if reply == apiToken
-        next()
-      else
-        res.status(403).send 'Forbiden'
+
+tokenAuth = (req, res, next) ->
+  req.session = session
+
+  req.session.getUserApiToken req.query.uid, (apiToken) ->
+    if apiToken is req.query.apiToken
+      next()
+    else
+      res.status(403).send 'Forbiden'
