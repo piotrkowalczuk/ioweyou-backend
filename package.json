@@ -11,6 +11,7 @@
     "redis": "*",
     "node-uuid": "*",
     "knex": "0.x",
-    "jasmine-node": "1.11.x"
+    "jasmine-node": "1.11.x",
+    "moment": "2.x"
   }
 }
