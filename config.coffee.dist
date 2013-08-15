@@ -1,4 +1,24 @@
-module.exports =
+testConfig = 
+  app:
+    port: 8000
+  database:
+    client: 'pg',
+    connection:
+      host: '127.0.0.1',
+      user: 'postgres',
+      password: 'postgres.123',
+      database: 'ioweyouTest',
+      charset: 'utf8'
+  redis:
+    host: 'localhost',
+    port: 6379,
+    db: 2,
+    pass: ''
+  facebook:
+    appId: '',
+    apiSecret: ''
+
+developmentConfig = 
   app:
     port: 8000
   database:
@@ -17,3 +37,36 @@ module.exports =
   facebook:
     appId: '',
     apiSecret: ''
+
+productionConfig = 
+  app:
+    port: 8000
+  database:
+    client: 'pg',
+    connection:
+      host: '127.0.0.1',
+      user: 'postgres',
+      password: 'postgres.123',
+      database: 'ioweyou',
+      charset: 'utf8'
+  redis:
+    host: 'localhost',
+    port: 6379,
+    db: 2,
+    pass: ''
+  facebook:
+    appId: '',
+    apiSecret: ''
+
+defaultConfig = 
+  developmentConfig
+
+module.exports = 
+  switch process.env.NODE_ENV
+    when 'test' then testConfig
+    when 'development' then developmentConfig
+    when 'production' then productionConfig
+    else defaultConfig
+
+
+

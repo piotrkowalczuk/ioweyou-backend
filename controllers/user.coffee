@@ -17,7 +17,6 @@ getById = (req, res) ->
 
 getFriends = (req, res) ->
   userId = req.params.id
-  console.log user.getFriends(userId).toString()
   user.getFriends(userId).exec (error,response)->
     if not error
       res.send(response)
