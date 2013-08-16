@@ -1,82 +1,101 @@
-pg = require('pg')
-config = require('../config')
-auth = require('../lib/auth')
+config = require '../config'
+auth = require '../lib/auth'
+entryTable = require '../models/entry'
+userTable = require '../models/user'
+moment = require 'moment'
 
-#---- postgres ----
-client = new pg.Client(config.database.conString)
-client.connect()
 
 module.exports = (app) ->
-  app.get '/entry/:id', auth.tokenAuth, getById
-  app.get '/entries', auth.tokenAuth, getAll
-  app.get '/entries/summary/:userId', getSummary
+  #GET
+  app.get '/entry/:id', auth.tokenAuth, one
+  app.get '/entries', auth.tokenAuth, list
+  app.get '/entries/summary/:id', auth.tokenAuth, summary
+  #PUT
+  app.put '/entry',auth.tokenAuth, create
+  #POST
+  app.post '/entry/:id', auth.tokenAuth, modify
 
 
-generateResponse = (req, res, sql) ->
-  client.query sql, (err, result) ->
-    if(err)
-      return console.error('error running query', err)
-
-    json = JSON.stringify(result.rows)
-    res.header "Content-Type", "application/json; charset=utf-8"
-    res.end(json)
-
-
-getById = (req, res) ->
+one = (req, res) ->
   entryId = req.params.id
-  sql = 'SELECT ee.*,
-            debtor.first_name as debtor_first_name,
-            debtor.last_name as debtor_last_name,
-            debtor.username as debtor_username,
-            lender.first_name as lender_first_name,
-            lender.last_name as lender_last_name,
-            lender.username as lender_username
-            FROM entry_entry as ee
-            LEFT JOIN auth_user as debtor ON debtor.id = ee.debtor_id
-            LEFT JOIN auth_user as lender ON lender.id = ee.lender_id
-            WHERE ee.status < 3 AND ee.id = '+entryId+';'
+  facebookUserId = req.query.uid
 
-  generateResponse(req, res, sql)
+  req.session.getUserId facebookUserId, (userId) ->
+    entryTable.getUserEntryById userId, entryId, (entry) ->
+      if entry
+        res.send(entry)
+      else
+        res.status(404).send()
 
 
-getAll = (req, res) ->
-  sql = 'SELECT ee.*,
-           debtor.first_name as debtor_first_name,
-           debtor.last_name as debtor_last_name,
-           debtor.username as debtor_username,
-           lender.first_name as lender_first_name,
-           lender.last_name as lender_last_name,
-           lender.username as lender_username
-           FROM entry_entry as ee
-           LEFT JOIN auth_user as debtor ON debtor.id = ee.debtor_id
-           LEFT JOIN auth_user as lender ON lender.id = ee.lender_id
-           WHERE ee.status < 3
-           ORDER BY created_at DESC;'
+list = (req, res) ->
+  facebookUserId = req.query.uid
 
-  generateResponse(req, res, sql)
+  req.session.getUserId facebookUserId, (userId) ->
+    if userId
+      entryTable.getAll userId, (entries) ->
+        if entries
+          res.send(entries)
+        else
+          res.status(404).send()
 
 
-getSummary = (req, res) ->
-  userId = req.params.userId
-  sql = 'SELECT ee.* FROM entry_entry as ee WHERE ee.status < 3 AND (ee.debtor_id = '+userId+' OR ee.lender_id = '+userId+');'
+summary = (req, res) ->
+  userId = req.params.id
 
-  client.query sql, (err, result) ->
-    if(err)
-      return console.error('error running query', err)
+  entryTable.getSummary userId, (summary) ->
+    if summary
+      res.send(summary)
+    else
+      res.status(404).send()
 
-    summary = 0.0
 
-    i = 0
-    for entry in result.rows
-      if entry.debtor_id.toString() is userId
-        summary = parseFloat(summary) - parseFloat(entry.value)
-        console.log i+": "+summary+" - "+entry.value
-      if entry.lender_id.toString() is userId
-        summary = parseFloat(summary) + parseFloat(entry.value)
-        console.log i+": "+summary+" - "+entry.value
-      i = i + 1
+create = (req, res) ->
 
-    json = JSON.stringify({"summary": summary.toFixed(2)})
-    res.header "Content-Type", "application/json; charset=utf-8"
-    res.end(json)
+  values =
+    name: req.body.name
+    description: req.body.description
+    value: req.body.value
+    status: req.body.status
+    lender_id: req.body.lender_id
+    debtor_id: req.body.debtor_id
+    created_at: moment().format('YYYY-MM-DD HH:mm:ss')
+    updated_at: moment().format('YYYY-MM-DD HH:mm:ss')
+
+  entry.create values, (isCreated)->
+    if isCreated
+      res.send('The entry has been created.')
+    else
+      res.status(500).send()
+
+
+modify = (req, res) ->
+  entryId = req.params.id
+  facebookUserId = req.query.uid
+
+  req.session.getUserId facebookUserId, (userId) ->
+    if userId
+      entryTable.getById entryId, (entry) ->
+        if entry
+          if userId is (entry.debtor_id or entry.lender_id)
+            values =
+              name: req.body.name
+              description: req.body.description
+              value: req.body.value
+              status: req.body.status
+              updated_at: moment().format('YYYY-MM-DD HH:mm:ss')
+
+            entryTable.modify entryId, values, (isModified) ->
+              if isModified
+                res.send('The entry has been changed.')
+              else
+                res.status(500).send()
+          else
+            res.status(404).send()
+    else
+      res.status(404).send()
+
+
+
+
 
