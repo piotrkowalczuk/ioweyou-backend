@@ -7,8 +7,8 @@ module.exports =
     getUserEntryById(userId, entryId, next)
   getAll: (id, next) ->
     getAll(id, next)
-  getSummary: (id, next) ->
-    getSummary(id, next)
+  getSummary: (userId, next) ->
+    getSummary(userId, next)
   create: (fields, next) ->
     create(fields, next)
   modify: (id, fields, next) ->
@@ -68,7 +68,10 @@ getUserEntryById = (userId, entryId, next) ->
   getEntryQuery()
     .where('entry_entry.id', entryId)
     .where('entry_entry.status', '<', '3')
-    .whereRaw('( "debtor"."id" = '+userId+' or "lender"."id" = '+userId+')')
+    .where (sub) ->
+      sub.where('debtor.id', userId)
+      .orWhere('lender.id', userId)
+
     .exec (error, reply) ->
       if not error
         next(reply[0])
@@ -88,16 +91,15 @@ getAll = (id, next) ->
       else
         next(false)
 
-getSummary = (id, next) ->
+getSummary = (userId, next) ->
 
   db.postgres()
     .from('entry_entry')
-    .select(
-      'entry_entry.*'
-    )
+    .select('entry_entry.*')
     .where('entry_entry.status', '<', '3')
-    .where('entry_entry.debtor_id', id)
-    .orWhere('entry_entry.lender_id', id)
+    .where (sub) ->
+      sub.where('debtor_id', userId)
+        .orWhere('lender_id', userId)
     .exec (error, reply) ->
       if not error
         summary = 0.0

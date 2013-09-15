@@ -11,8 +11,14 @@ module.exports =
 tokenAuth = (req, res, next) ->
   req.session = session
 
-  req.session.getUserApiToken req.query.uid, (apiToken) ->
-    if apiToken is req.query.apiToken
-      next()
-    else
-      res.status(403).send 'Forbiden'
+  queryApiToken = req.query.apiToken
+  queryUID = req.query.uid
+
+  if queryApiToken and queryUID
+    req.session.getUserApiToken queryUID, (apiToken) ->
+      if apiToken is queryApiToken
+        next()
+      else
+        res.status(403).send 'Forbiden'
+  else
+    res.status(500).send 'Bad Request'

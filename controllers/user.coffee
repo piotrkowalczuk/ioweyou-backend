@@ -4,22 +4,22 @@ user = require '../models/user'
 
 module.exports = (app) ->
   app.get '/user/:id', getById
-  app.get '/user/friends/:id', getFriends
+  app.get '/friends', getFriends
 
 getById = (req, res) ->
   userId = req.params.id
-
-  user.getById(userId).exec (error,response)->
-    if not error
-      res.send(response)
+  user.getById userId, (user) =>
+    if user
+      res.header "Content-Type", "application/json"
+      res.send(user)
     else
-  res.send(error)
+      res.status(404).send()
 
 getFriends = (req, res) ->
-  userId = req.params.id
-  console.log user.getFriends(userId).toString()
-  user.getFriends(userId).exec (error,response)=>
-    if not error
-      res.send(response)
+  userId = req.query.uid
+  user.getFriends userId, (friends) =>
+    if friends
+      res.header "Content-Type", "application/json"
+      res.send(friends)
     else
-      res.send(error)
+      res.status(404).send()

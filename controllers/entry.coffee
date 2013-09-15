@@ -9,7 +9,7 @@ module.exports = (app) ->
   #GET
   app.get '/entry/:id', auth.tokenAuth, one
   app.get '/entries', auth.tokenAuth, list
-  app.get '/entries/summary/:id', auth.tokenAuth, summary
+  app.get '/entries/summary', auth.tokenAuth, summary
   #PUT
   app.put '/entry',auth.tokenAuth, create
   #POST
@@ -18,33 +18,34 @@ module.exports = (app) ->
 
 one = (req, res) ->
   entryId = req.params.id
-  facebookUserId = req.query.uid
+  userId = req.query.uid
 
-  req.session.getUserId facebookUserId, (userId) ->
+  req.session.getUserId userId, (userId) ->
     entryTable.getUserEntryById userId, entryId, (entry) ->
       if entry
+        res.header "Content-Type", "application/json"
         res.send(entry)
       else
         res.status(404).send()
 
 
 list = (req, res) ->
-  facebookUserId = req.query.uid
-
-  req.session.getUserId facebookUserId, (userId) ->
+  userId = req.query.uid
+  req.session.getUserId userId, (userId) ->
     if userId
       entryTable.getAll userId, (entries) ->
         if entries
+          res.header "Content-Type", "application/json"
           res.send(entries)
         else
           res.status(404).send()
 
 
 summary = (req, res) ->
-  userId = req.params.id
-
+  userId = req.query.uid
   entryTable.getSummary userId, (summary) ->
     if summary
+      res.header "Content-Type", "application/json"
       res.send(summary)
     else
       res.status(404).send()
@@ -71,9 +72,9 @@ create = (req, res) ->
 
 modify = (req, res) ->
   entryId = req.params.id
-  facebookUserId = req.query.uid
+  userId = req.query.uid
 
-  req.session.getUserId facebookUserId, (userId) ->
+  req.session.getUserId userId, (userId) ->
     if userId
       entryTable.getById entryId, (entry) ->
         if entry

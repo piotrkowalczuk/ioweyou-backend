@@ -7,8 +7,8 @@ module.exports =
     getUserFieldValue(uid, next)
   getUserData: (uid, next) ->
     getUserData(uid, next)
-  setUserData: (uid, userData, next) ->
-    setUserData(uid, userData, next)
+  setUserData: (uid, userData) ->
+    setUserData(uid, userData)
   getUserApiToken: (uid, next) ->
     getUserApiToken(uid, next)
   getUserId: (uid, next) ->
@@ -16,8 +16,9 @@ module.exports =
 
 
 getUserFieldValue = (uid, field, next) ->
+  console.log uid
   db.redis.get uid, (error, reply) ->
-    if not error
+    if not error and reply
       user = JSON.parse(reply)
       next(user[field])
     else
@@ -26,19 +27,19 @@ getUserFieldValue = (uid, field, next) ->
 
 getUserData = (uid, next) ->
   db.redis.get uid, (error, reply) ->
-    if not error
+    if not error and reply
       next(JSON.parse(reply))
     else
       next(false)
 
-setUserData = (uid, userData, next) ->
+
+setUserData = (uid, userData) ->
   db.redis.set uid, JSON.stringify(userData)
-  next()
 
 
 getUserApiToken = (uid, next) ->
-  getUserFieldValue(uid, 'apiToken', next)
+  getUserFieldValue(uid, 'ioweyouToken', next)
 
 
 getUserId = (uid, next) ->
-  getUserFieldValue(uid, 'id', next)
+  getUserFieldValue(uid, 'ioweyouId', next)

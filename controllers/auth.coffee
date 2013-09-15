@@ -5,13 +5,15 @@ facebook = require '../lib/facebook'
 userTable = require '../models/user'
 config = require '../config'
 db = require '../db'
+session = require '../models/session'
 
 module.exports = (app) ->
   app.post '/login', login
 
 
 login = (req, res) ->
-  facebookToken = req.body.access_token
+  facebookToken = req.body.pass
+  req.session = session
 
   # check if token match App id.
   request.get facebook.getGraphAPI.AppRequest(facebookToken), (error, response, appResponseBody) ->
@@ -20,27 +22,28 @@ login = (req, res) ->
       request.get facebook.getGraphAPI.MeRequest(facebookToken), (error, response, meResponseBody) ->
         meResponseObject = JSON.parse(meResponseBody)
         if not error && response.statusCode == 200
-          console.log meResponseObject
           if not (appResponseObject.id is config.facebook.appId)
             res.status(403).send('Forbiden')
+          else
+            userTable.getByFacebookId(meResponseObject.id).exec (error, response)->
+              if not error
 
-          userTable.getByFacebookId(meResponseObject.id).exec (error, response)->
+                userData =
+                  username: response[0].username
+                  first_name: response[0].first_name
+                  last_name: response[0].last_name
+                  email: response[0].email
+                  facebookId: meResponseObject.id
+                  ioweyouToken: uuid.v4()
+                  ioweyouId: response[0].id.toString()
 
-            if not error
+                console.log userData
 
-              userData =
-                id: response[0].id
-                username: response[0].username
-                first_name: response[0].first_name
-                last_name: response[0].last_name
-                email: response[0].email
-                uid: meResponseObject.id
-                apiToken: uuid.v4()
-
-              req.session.setUserData(meResponseObject.id, userData)
-              res.send userData
-            else
-              res.send error
+                req.session.setUserData(userData.ioweyouId, userData)
+                res.header "Content-Type", "application/json"
+                res.send userData
+              else
+                res.send error
 
         else
           res.status(response.statusCode).send meResponseBody
