@@ -13,7 +13,8 @@ module.exports =
     create(fields, next)
   modify: (id, fields, next) ->
     modify(id, fields, next)
-
+  accept: (userId, entryId, next) ->
+    accept(userId, entryId, next)
 
 getEntryQuery = ()->
   db.postgres()
@@ -114,3 +115,23 @@ getSummary = (userId, next) ->
         next(JSON.stringify({"summary": summary.toFixed(2)}))
       else
         next(false)
+
+
+accept = (userId, entryId, next) ->
+  console.log userId, entryId
+  db.postgres('entry_entry')
+    .update({'accepted_at': new Date(), 'status': 1})
+    .where('id', '=', entryId)
+    .whereNull('accepted_at')
+    .whereIn('status', [0,2]) # open|rejected
+    .andWhere(()->
+      @where('debtor_id', userId)
+        .orWhere('lender_id', userId)
+    )
+    .exec (error, reply) ->
+      if not error and reply > 0
+        next(200)
+      if not error and reply is 0
+        next(304)
+      else
+        next(403)

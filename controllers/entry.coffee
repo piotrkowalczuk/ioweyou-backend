@@ -14,7 +14,7 @@ module.exports = (app) ->
   app.put '/entry',auth.tokenAuth, create
   #POST
   app.post '/entry/:id', auth.tokenAuth, modify
-
+  app.post '/entry/accept/:id', auth.tokenAuth, accept
 
 one = (req, res) ->
   entryId = req.params.id
@@ -96,6 +96,13 @@ modify = (req, res) ->
     else
       res.status(404).send()
 
+
+accept = (req, res) ->
+  entryId = req.params.id
+  userId = req.query.uid
+
+  entryTable.accept userId, entryId, (statusCode) ->
+      res.status(statusCode).send()
 
 
 
