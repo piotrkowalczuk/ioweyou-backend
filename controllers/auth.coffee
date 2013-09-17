@@ -25,21 +25,19 @@ login = (req, res) ->
           if not (appResponseObject.id is config.facebook.appId)
             res.status(403).send('Forbiden')
           else
-            userTable.getByFacebookId(meResponseObject.id).exec (error, response)->
+            userTable.getByFacebookId meResponseObject.id, (user)->
               if not error
 
                 userData =
-                  username: response[0].username
-                  first_name: response[0].first_name
-                  last_name: response[0].last_name
-                  email: response[0].email
+                  username: user.username
+                  first_name: user.first_name
+                  last_name: user.last_name
+                  email: user.email
                   facebookId: meResponseObject.id
                   ioweyouToken: uuid.v4()
-                  ioweyouId: response[0].id.toString()
+                  ioweyouId: user.id.toString()
 
-                console.log userData
-
-                req.session.setUserData(userData.ioweyouId, userData)
+                req.session.setUserData userData.ioweyouId, userData
                 res.header "Content-Type", "application/json"
                 res.send userData
               else

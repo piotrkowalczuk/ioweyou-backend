@@ -16,7 +16,6 @@ module.exports =
 
 
 getUserFieldValue = (uid, field, next) ->
-  console.log uid
   db.redis.get uid, (error, reply) ->
     if not error and reply
       user = JSON.parse(reply)
