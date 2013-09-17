@@ -15,6 +15,9 @@ module.exports = (app) ->
   #POST
   app.post '/entry/:id', auth.tokenAuth, modify
   app.post '/entry/accept/:id', auth.tokenAuth, accept
+  app.post '/entry/reject/:id', auth.tokenAuth, reject
+  #DELETE
+  app.delete '/entry/:id', auth.tokenAuth, remove
 
 one = (req, res) ->
   entryId = req.params.id
@@ -99,10 +102,26 @@ modify = (req, res) ->
 
 accept = (req, res) ->
   entryId = req.params.id
-  userId = req.query.uid
+  userId = req.body.uid
 
-  entryTable.accept userId, entryId, (statusCode) ->
-      res.status(statusCode).send()
+  entryTable.accept userId, entryId, (statusCode, isModified) ->
+      res.status(statusCode).send {isModified: isModified}
+
+
+reject = (req, res) ->
+  entryId = req.params.id
+  userId = req.body.uid
+
+  entryTable.reject userId, entryId, (statusCode, isModified) ->
+    res.status(statusCode).send {isModified: isModified}
+
+
+remove = (req, res) ->
+  entryId = req.params.id
+  userId = req.body.uid
+
+  entryTable.remove userId, entryId, (statusCode, isModified) ->
+    res.status(statusCode).send {isModified: isModified}
 
 
 

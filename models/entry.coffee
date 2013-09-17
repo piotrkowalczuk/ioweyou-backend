@@ -15,6 +15,11 @@ module.exports =
     modify(id, fields, next)
   accept: (userId, entryId, next) ->
     accept(userId, entryId, next)
+  reject: (userId, entryId, next) ->
+    reject(userId, entryId, next)
+  remove: (userId, entryId, next) ->
+    remove(userId, entryId, next)
+
 
 getEntryQuery = ()->
   db.postgres()
@@ -118,20 +123,48 @@ getSummary = (userId, next) ->
 
 
 accept = (userId, entryId, next) ->
-  console.log userId, entryId
+
   db.postgres('entry_entry')
     .update({'accepted_at': new Date(), 'status': 1})
     .where('id', '=', entryId)
-    .whereNull('accepted_at')
     .whereIn('status', [0,2]) # open|rejected
-    .andWhere(()->
-      @where('debtor_id', userId)
-        .orWhere('lender_id', userId)
-    )
+    .where('debtor_id', '=', userId)
     .exec (error, reply) ->
       if not error and reply > 0
-        next(200)
+        next(200, true)
       if not error and reply is 0
-        next(304)
+        next(200, false)
+      else
+        next(403)
+
+
+reject = (userId, entryId, next) ->
+
+  db.postgres('entry_entry')
+    .update({'rejected_at': new Date(), 'status': 2})
+    .where('id', '=', entryId)
+    .where('debtor_id', '=', 0) # open
+    .where('debtor_id', '=', userId)
+    .exec (error, reply) ->
+      if not error and reply > 0
+        next(200, true)
+      if not error and reply is 0
+        next(200, false)
+      else
+        next(403)
+
+
+remove = (userId, entryId, next) ->
+
+  db.postgres('entry_entry')
+    .update({'status': 3})
+    .where('id', '=', entryId)
+    .where('debtor_id', '=', 0) # open
+    .where('lender_id', '=', userId)
+    .exec (error, reply) ->
+      if not error and reply > 0
+        next(200, true)
+      if not error and reply is 0
+        next(200, false)
       else
         next(403)
