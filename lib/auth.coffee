@@ -11,8 +11,8 @@ module.exports =
 tokenAuth = (req, res, next) ->
   req.session = session
 
-  queryApiToken = req.query.apiToken
-  queryUID = req.query.uid
+  queryApiToken = req.param('apiToken')
+  queryUID = req.param('uid')
 
   if queryApiToken and queryUID
     req.session.getUserApiToken queryUID, (apiToken) ->
