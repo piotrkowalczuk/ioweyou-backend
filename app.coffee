@@ -10,4 +10,4 @@ require('./controllers/auth')(app)
 require('./controllers/user')(app)
 
 app.listen config.app.port
-console.log 'Listening on port '+config.app.port
+console.log "Listening on port #{config.app.port}"
