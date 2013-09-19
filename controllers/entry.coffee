@@ -118,7 +118,7 @@ reject = (req, res) ->
 
 remove = (req, res) ->
   entryId = req.params.id
-  userId = req.body.uid
+  userId = req.query.uid
 
   entryTable.remove userId, entryId, (statusCode, isModified) ->
     res.status(statusCode).send {isModified: isModified}

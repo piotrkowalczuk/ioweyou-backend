@@ -88,8 +88,9 @@ getAll = (id, next) ->
 
   getEntryQuery()
     .where('entry_entry.status', '<', '3')
-    .where('debtor.id', id)
-    .orWhere('lender.id', id)
+    .where (sub) ->
+      sub.where('debtor_id', id)
+        .orWhere('lender_id', id)
     .orderBy('entry_entry.created_at', 'DESC')
     .exec (error, reply) ->
       if not error
@@ -143,8 +144,8 @@ reject = (userId, entryId, next) ->
   db.postgres('entry_entry')
     .update({'rejected_at': new Date(), 'status': 2})
     .where('id', '=', entryId)
-    .where('debtor_id', '=', 0) # open
-    .where('debtor_id', '=', userId)
+    .where('status', '=', 0) # open
+    .where('lender_id', '=', userId)
     .exec (error, reply) ->
       if not error and reply > 0
         next(200, true)
@@ -159,7 +160,7 @@ remove = (userId, entryId, next) ->
   db.postgres('entry_entry')
     .update({'status': 3})
     .where('id', '=', entryId)
-    .where('debtor_id', '=', 0) # open
+    .where('status', '=', 0) # open
     .where('lender_id', '=', userId)
     .exec (error, reply) ->
       if not error and reply > 0
