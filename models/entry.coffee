@@ -11,8 +11,8 @@ module.exports =
     getSummary(userId, next)
   create: (fields, next) ->
     create(fields, next)
-  modify: (id, fields, next) ->
-    modify(id, fields, next)
+  modify: (userId, entryId, fields, next) ->
+    modify(userId, entryId, fields, next)
   accept: (userId, entryId, next) ->
     accept(userId, entryId, next)
   reject: (userId, entryId, next) ->
@@ -36,6 +36,7 @@ getEntryQuery = ()->
     .join('auth_user as debtor', 'debtor.id', '=', 'entry_entry.debtor_id', 'left')
     .join('auth_user as lender', 'lender.id', '=', 'entry_entry.lender_id', 'left')
 
+
 create = (fields, next) ->
 
   db.postgres('entry_entry')
@@ -46,16 +47,22 @@ create = (fields, next) ->
       else
         next(false)
 
-modify = (id, fields, next) ->
+
+modify = (userId, entryId, fields, next) ->
 
   db.postgres('entry_entry')
     .update(fields)
-    .where('entry_entry.id', '=', id)
+    .where('id', '=', entryId)
+    .where (sub) ->
+      sub.where('debtor_id', userId)
+        .orWhere('lender_id', userId)
     .exec (error, reply) ->
-      if not error
-        next(true)
+      if not error and reply > 0
+        next(200, true)
+      if not error and reply is 0
+        next(200, false)
       else
-        next(false)
+        next(403)
 
 
 getById = (id, next) ->
@@ -68,6 +75,7 @@ getById = (id, next) ->
         next(reply[0])
       else
         next(false)
+
 
 getUserEntryById = (userId, entryId, next) ->
 
@@ -84,6 +92,7 @@ getUserEntryById = (userId, entryId, next) ->
       else
         next(false)
 
+
 getAll = (id, next) ->
 
   getEntryQuery()
@@ -97,6 +106,7 @@ getAll = (id, next) ->
         next(reply)
       else
         next(false)
+
 
 getSummary = (userId, next) ->
 

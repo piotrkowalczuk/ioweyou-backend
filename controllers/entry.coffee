@@ -73,33 +73,6 @@ create = (req, res) ->
       res.status(500).send()
 
 
-modify = (req, res) ->
-  entryId = req.params.id
-  userId = req.query.uid
-
-  req.session.getUserId userId, (userId) ->
-    if userId
-      entryTable.getById entryId, (entry) ->
-        if entry
-          if userId is (entry.debtor_id or entry.lender_id)
-            values =
-              name: req.body.name
-              description: req.body.description
-              value: req.body.value
-              status: req.body.status
-              updated_at: moment().format('YYYY-MM-DD HH:mm:ss')
-
-            entryTable.modify entryId, values, (isModified) ->
-              if isModified
-                res.send('The entry has been changed.')
-              else
-                res.status(500).send()
-          else
-            res.status(404).send()
-    else
-      res.status(404).send()
-
-
 accept = (req, res) ->
   entryId = req.params.id
   userId = req.body.uid
@@ -121,6 +94,21 @@ remove = (req, res) ->
   userId = req.query.uid
 
   entryTable.remove userId, entryId, (statusCode, isModified) ->
+    res.status(statusCode).send {isModified: isModified}
+
+
+modify = (req, res) ->
+  entryId = req.params.id
+  userId = req.body.uid
+
+  values =
+    name: req.body.name
+    description: req.body.description
+    value: req.body.value
+    status: req.body.status
+    updated_at: moment().format('YYYY-MM-DD HH:mm:ss')
+
+  entryTable.modify userId, entryId, values, (statusCode, isModified) ->
     res.status(statusCode).send {isModified: isModified}
 
 

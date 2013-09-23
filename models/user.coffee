@@ -11,26 +11,6 @@ module.exports =
     getFriends(userId, next)
 
 
-getById = (id, next) ->
-  db.postgres()
-    .from('auth_user')
-    .select(
-      'auth_user.id',
-      'auth_user.username',
-      'auth_user.first_name',
-      'auth_user.last_name',
-      'auth_user.email',
-      'sau.uid'
-    )
-    .join('social_auth_usersocialauth as sau', 'sau.user_id', '=', 'auth_user.id', 'left')
-    .where('auth_user.id', id)
-    .exec (error, reply) ->
-      if not error
-        next(reply[0])
-      else
-        next(false)
-
-
 getBy = (fieldName, value, next) ->
   db.postgres()
     .from('auth_user')
@@ -49,6 +29,11 @@ getBy = (fieldName, value, next) ->
         next(reply[0])
       else
         next(false)
+
+
+getById = (id, next) ->
+  getBy('auth_user', id, next)
+
 
 getByFacebookId = (value, next) ->
   getBy('sau.uid', value, next)
