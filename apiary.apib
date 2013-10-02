@@ -1,0 +1,86 @@
+HOST: http://www.google.com/
+
+--- ioweyou-express ---
+
+--
+Entry Resources
+The following is a section of resources related to the entry.
+--
+
+List of all entries related to user.
+GET /entries
+< 200
+< Content-Type: application/json
+[ 
+    { 
+        id: 1,
+        name: 'sample name',
+        description: 'sample description',
+        value: '5432.00',
+        lender_id: 1,
+        accepted_at: Wed Sep 18 2013 20:52:06 GMT+0200 (CEST),
+        created_at: Wed Aug 14 2013 20:09:48 GMT+0200 (CEST),
+        updated_at: Wed Oct 02 2013 20:26:57 GMT+0200 (CEST),
+        debtor_id: 2,
+        rejected_at: null,
+        status: 0,
+        debtor_first_name: 'DebtorFirstName',
+        debtor_last_name: 'DebtorLastName',
+        debtor_username: 'debtor',
+        lender_first_name: 'LenderFirstName',
+        lender_last_name: 'LenderLastName',
+        lender_username: 'lender' 
+    }
+    { 
+        id: 2,
+        name: 'sample name2',
+        description: 'sample description2',
+        value: '10.00',
+        lender_id: 1,
+        accepted_at: Wed Sep 18 2013 00:02:17 GMT+0200 (CEST),
+        created_at: Sun Oct 10 2010 10:00:00 GMT+0200 (CEST),
+        updated_at: Sun Oct 10 2010 10:00:01 GMT+0200 (CEST),
+        debtor_id: 2,
+        rejected_at: null,
+        status: 0,
+        debtor_first_name: 'DebtorFirstName',
+        debtor_last_name: 'DebtorLastName',
+        debtor_username: 'debtor',
+        lender_first_name: 'LenderFirstName',
+        lender_last_name: 'LenderLastName',
+        lender_username: 'lender' 
+    }
+]
+
+Specific entry related to user.
+GET /entry/:id
+< 200
+< Content-Type: application/json
+{ 
+    id: 1,
+    name: 'sample name',
+    description: 'sample description',
+    value: '5432.00',
+    lender_id: 1,
+    accepted_at: Wed Sep 18 2013 20:52:06 GMT+0200 (CEST),
+    created_at: Wed Aug 14 2013 20:09:48 GMT+0200 (CEST),
+    updated_at: Wed Oct 02 2013 20:26:57 GMT+0200 (CEST),
+    debtor_id: 2,
+    rejected_at: null,
+    status: 0,
+    debtor_first_name: 'DebtorFirstName',
+    debtor_last_name: 'DebtorLastName',
+    debtor_username: 'debtor',
+    lender_first_name: 'LenderFirstName',
+    lender_last_name: 'LenderLastName',
+    lender_username: 'lender' 
+}
+
+
+Summary of all entries related to user.
+GET /entries/summary
+< 200
+< Content-Type: application/json
+{
+    "summary": "-6469.17"
+}
