@@ -42,10 +42,12 @@ create = (fields, next) ->
   db.postgres('entry_entry')
     .insert(fields)
     .exec (error, reply) ->
-      if not error
-        next(true)
+      if not error and reply > 0
+        next(200, true)
+      if not error and reply is 0
+        next(200, false)
       else
-        next(false)
+        next(403)
 
 
 modify = (userId, entryId, fields, next) ->

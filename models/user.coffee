@@ -9,7 +9,8 @@ module.exports =
     getByFacebookId(value, next)
   getFriends: (userId, next) ->
     getFriends(userId, next)
-
+  friendshipsExists: (userId, friendsIds, next) ->
+    friendshipsExists(userId, friendsIds, next)
 
 getBy = (fieldName, value, next) ->
   db.postgres()
@@ -43,16 +44,17 @@ getFriends = (id, next) ->
   subQuery = db.postgres.Raw('
     SELECT uf.creator_id AS friend
     FROM user_friendship uf, auth_user au
-    WHERE au.id = uf.friend_id AND  au.id = '+id+'
+    WHERE au.id = uf.friend_id AND au.id = '+id+'
     UNION
     SELECT uf.friend_id AS friend
     FROM user_friendship uf, auth_user au
-    WHERE au.id = uf.creator_id AND  au.id = '+id
+    WHERE au.id = uf.creator_id AND au.id = '+id
   )
 
   db.postgres()
     .from('auth_user')
     .select(
+      'auth_user.id',
       'auth_user.username',
       'auth_user.first_name',
       'auth_user.last_name',
@@ -64,5 +66,24 @@ getFriends = (id, next) ->
     .exec (error, reply) ->
       if not error
         next(reply)
+      else
+        next(false)
+
+
+friendshipsExists = (userId, friendsIds, next) ->
+  db.postgres()
+    .from('user_friendship')
+    .select(
+      'id'
+    )
+    .where (sub) ->
+      sub.whereIn('creator_id', friendsIds)
+        .andWhere('friend_id', userId)
+    .orWhere (sub) ->
+      sub.whereIn('friend_id', friendsIds)
+        .andWhere('creator_id', userId)
+    .exec (error, reply) ->
+      if not error and reply.length > 0
+        next(true)
       else
         next(false)

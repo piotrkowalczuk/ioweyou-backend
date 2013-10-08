@@ -11,6 +11,8 @@
     "redis": "*",
     "node-uuid": "*",
     "knex": "0.x",
-    "moment": "2.x"
+    "moment": "2.x",
+    "apnagent": "1.0.x",
+    "express-validator": "*"
   }
 }

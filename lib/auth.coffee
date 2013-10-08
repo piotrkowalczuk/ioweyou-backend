@@ -9,14 +9,14 @@ module.exports =
 
 
 tokenAuth = (req, res, next) ->
+
   req.session = session
+  req.assert('uid', 'Invalid uid').notEmpty().isInt()
+  req.assert('apiToken', 'Invalid uid').isUUIDv4()
 
-  queryApiToken = req.param('apiToken')
-  queryUID = req.param('uid')
-
-  if queryApiToken and queryUID
-    req.session.getUserApiToken queryUID, (apiToken) ->
-      if apiToken is queryApiToken
+  if not req.validationErrors()
+    req.session.getUserApiToken req.param('uid'), (apiToken) ->
+      if apiToken is req.param('apiToken')
         next()
       else
         res.status(403).send 'Forbiden'

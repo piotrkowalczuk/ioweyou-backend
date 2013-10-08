@@ -2,6 +2,7 @@ config = require '../config'
 auth = require '../lib/auth'
 entryTable = require '../models/entry'
 userTable = require '../models/user'
+userManager = require '../managers/user'
 moment = require 'moment'
 
 
@@ -20,33 +21,33 @@ module.exports = (app) ->
   app.delete '/entry/:id', auth.tokenAuth, remove
 
 one = (req, res) ->
-  entryId = req.params.id
-  userId = req.query.uid
+  req.assert('id', 'Invalid entry ID').notEmpty().isInt()
 
-  req.session.getUserId userId, (userId) ->
+  if not req.validationErrors()
+    entryId = req.params.id
+    userId = req.query.uid
+
     entryTable.getUserEntryById userId, entryId, (entry) ->
       if entry
         res.header "Content-Type", "application/json"
         res.send(entry)
       else
         res.status(404).send()
+  else
+    res.status(404).send()
 
 
 list = (req, res) ->
-  userId = req.query.uid
-  req.session.getUserId userId, (userId) ->
-    if userId
-      entryTable.getAll userId, (entries) ->
-        if entries
-          res.header "Content-Type", "application/json"
-          res.send(entries)
-        else
-          res.status(404).send()
+  entryTable.getAll req.query.uid, (entries) ->
+    if entries
+      res.header "Content-Type", "application/json"
+      res.send(entries)
+    else
+      res.status(404).send()
 
 
 summary = (req, res) ->
-  userId = req.query.uid
-  entryTable.getSummary userId, (summary) ->
+  entryTable.getSummary req.query.uid, (summary) ->
     if summary
       res.header "Content-Type", "application/json"
       res.send(summary)
@@ -55,62 +56,103 @@ summary = (req, res) ->
 
 
 create = (req, res) ->
+  req.checkBody('name', 'Invalid uid').notEmpty()
+  req.checkBody('value', 'Invalid uid').notEmpty().isInt()
 
-  values =
-    name: req.body.name
-    description: req.body.description
-    value: req.body.value
-    status: req.body.status
-    lender_id: req.body.lender_id
-    debtor_id: req.body.debtor_id
-    created_at: moment().format('YYYY-MM-DD HH:mm:ss')
-    updated_at: moment().format('YYYY-MM-DD HH:mm:ss')
+  if not req.validationErrors()
 
-  entry.create values, (isCreated)->
-    if isCreated
-      res.send('The entry has been created.')
-    else
-      res.status(500).send()
+    userId = req.body.uid
+    name = req.body.name
+    contractors = req.body.contractors
+    description = req.body.description
+    value = req.body.value / (contractors.length + req.body.includeMe)
+
+    userTable.friendshipsExists req.body.uid, userManager.usersToArrayOfIds(contractors), (exists) ->
+
+      if exists
+        for contractor in contractors
+          values =
+            name: name
+            description: description
+            value: value
+            status: 0
+            lender_id: userId
+            debtor_id: contractor.id
+            created_at: moment().format('YYYY-MM-DD HH:mm:ss')
+            updated_at: moment().format('YYYY-MM-DD HH:mm:ss')
+
+          entryTable.create values, (statusCode, isCreated)->
+            if statusCode is not 200
+              res.status(statusCode).send {isCreated: isCreated}
+
+        res.status(200).send {isCreated: true}
+      else
+        res.send(404).send()
+  else
+    res.send(404).send()
 
 
 accept = (req, res) ->
-  entryId = req.params.id
-  userId = req.body.uid
+  req.assert('id', 'Invalid uid').notEmpty().isInt()
 
-  entryTable.accept userId, entryId, (statusCode, isModified) ->
-      res.status(statusCode).send {isModified: isModified}
+  if not req.validationErrors()
+    entryId = req.params.id
+    userId = req.body.uid
+
+    entryTable.accept userId, entryId, (statusCode, isModified) ->
+        res.status(statusCode).send {isModified: isModified}
+  else
+    res.status(404).send()
 
 
 reject = (req, res) ->
-  entryId = req.params.id
-  userId = req.body.uid
+  req.assert('id', 'Invalid uid').notEmpty().isInt()
 
-  entryTable.reject userId, entryId, (statusCode, isModified) ->
-    res.status(statusCode).send {isModified: isModified}
+  if not req.validationErrors()
+    entryId = req.params.id
+    userId = req.body.uid
+
+    entryTable.reject userId, entryId, (statusCode, isModified) ->
+      res.status(statusCode).send {isModified: isModified}
+  else
+    res.status(404).send()
 
 
 remove = (req, res) ->
-  entryId = req.params.id
-  userId = req.query.uid
+  req.assert('id', 'Invalid uid').notEmpty().isInt()
 
-  entryTable.remove userId, entryId, (statusCode, isModified) ->
-    res.status(statusCode).send {isModified: isModified}
+  if not req.validationErrors()
+    entryId = req.params.id
+    userId = req.query.uid
+
+    entryTable.remove userId, entryId, (statusCode, isModified) ->
+      res.status(statusCode).send {isModified: isModified}
+  else
+    res.status(404).send()
 
 
 modify = (req, res) ->
-  entryId = req.params.id
-  userId = req.body.uid
+  req.assert('id', 'Invalid uid').notEmpty().isInt()
+  req.checkBody('name', 'Invalid uid').notEmpty()
+  req.checkBody('value', 'Invalid uid').notEmpty().isInt()
 
-  values =
-    name: req.body.name
-    description: req.body.description
-    value: req.body.value
-    status: req.body.status
-    updated_at: moment().format('YYYY-MM-DD HH:mm:ss')
+  if not req.validationErrors()
+    entryId = req.params.id
+    userId = req.body.uid
+    name = req.body.name
+    description = req.body.description
+    value = req.body.value
 
-  entryTable.modify userId, entryId, values, (statusCode, isModified) ->
-    res.status(statusCode).send {isModified: isModified}
+    values =
+      name: name
+      description: description
+      value: value
+      updated_at: moment().format('YYYY-MM-DD HH:mm:ss')
 
+    entryTable.modify userId, entryId, values, (statusCode, isModified) ->
+      res.status(statusCode).send {isModified: isModified}
+  else
+    res.status(404).send()
 
 
 
