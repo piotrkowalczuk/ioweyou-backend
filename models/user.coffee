@@ -63,6 +63,7 @@ getFriends = (id, next) ->
     )
     .whereIn('auth_user.id', subQuery)
     .join('social_auth_usersocialauth as sau', 'sau.user_id', '=', 'auth_user.id', 'left')
+    .orderBy('auth_user.last_name', 'ASC')
     .exec (error, reply) ->
       if not error
         next(reply)

@@ -152,7 +152,7 @@ modify = (req, res) ->
     entryTable.modify userId, entryId, values, (statusCode, isModified) ->
       res.status(statusCode).send {isModified: isModified}
   else
-    res.status(404).send()
+    res.status(400).send()
 
 
 

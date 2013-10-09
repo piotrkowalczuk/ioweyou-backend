@@ -98,11 +98,11 @@ getUserEntryById = (userId, entryId, next) ->
 getAll = (id, next) ->
 
   getEntryQuery()
-    .where('entry_entry.status', '<', '3')
+    .where('status', '<', '3')
     .where (sub) ->
       sub.where('debtor_id', id)
         .orWhere('lender_id', id)
-    .orderBy('entry_entry.created_at', 'DESC')
+    .orderBy('created_at', 'DESC')
     .exec (error, reply) ->
       if not error
         next(reply)

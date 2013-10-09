@@ -16,8 +16,7 @@ getById = (req, res) ->
       res.status(404).send()
 
 getFriends = (req, res) ->
-  userId = req.query.uid
-  user.getFriends userId, (friends) =>
+  user.getFriends req.query.uid, (friends) =>
     if friends
       res.header "Content-Type", "application/json"
       res.send(friends)

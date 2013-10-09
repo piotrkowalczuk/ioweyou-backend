@@ -21,4 +21,4 @@ tokenAuth = (req, res, next) ->
       else
         res.status(403).send 'Forbiden'
   else
-    res.status(500).send 'Bad Request'
+    res.status(400).send 'Bad Request'
