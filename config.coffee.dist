@@ -17,3 +17,12 @@ module.exports =
   facebook:
     appId: '',
     apiSecret: ''
+  mail:
+    from: 'ioweyou.pl@gmail.com'
+    host: 'smtp.gmail.com'
+    secureConnection: true
+    port: 465
+    transportMethod: 'SMTP'
+    auth:
+      user: 'gmail.user@gmail.com',
+      pass: 'userpass'

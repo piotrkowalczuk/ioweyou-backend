@@ -10,9 +10,11 @@
     "request": "*",
     "redis": "*",
     "node-uuid": "*",
-    "knex": "0.x",
+    "knex": "0.2.0",
     "moment": "2.x",
     "apnagent": "1.0.x",
-    "express-validator": "*"
+    "express-validator": "*",
+    "express-mailer": "0.2.x",
+    "jade": "*"
   }
 }

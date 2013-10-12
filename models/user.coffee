@@ -33,7 +33,7 @@ getBy = (fieldName, value, next) ->
 
 
 getById = (id, next) ->
-  getBy('auth_user', id, next)
+  getBy('auth_user.id', id, next)
 
 
 getByFacebookId = (value, next) ->

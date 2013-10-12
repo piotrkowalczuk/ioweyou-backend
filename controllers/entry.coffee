@@ -1,9 +1,9 @@
+moment = require 'moment'
 config = require '../config'
 auth = require '../lib/auth'
 entryTable = require '../models/entry'
 userTable = require '../models/user'
 userManager = require '../managers/user'
-moment = require 'moment'
 
 
 module.exports = (app) ->
@@ -84,6 +84,20 @@ create = (req, res) ->
           entryTable.create values, (statusCode, isCreated)->
             if statusCode is not 200
               res.status(statusCode).send {isCreated: isCreated}
+
+        userTable.getById userId, (user) =>
+          if user
+            for contractor in contractors
+              res.mailer.send 'mails/creatingConfirmation', {
+                to: contractor.email,
+                subject: "#{user.first_name} #{user.last_name} add dept to you.",
+                title: name,
+                description: description,
+                value: value,
+                contractor: contractor
+              }, (error) ->
+          else
+            res.status(404).send()
 
         res.status(200).send {isCreated: true}
       else
