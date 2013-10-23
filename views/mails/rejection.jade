@@ -14,17 +14,17 @@ head
                                 table(border='0', cellpadding='0', cellspacing='0', width='100%')
                                     tr
                                         td(colspan='2', style='color: #153643; font-family: Arial, sans-serif; font-size: 24px;')
-                                            b  Entry has been added.
+                                            b  Entry has been rejected.
                                     tr
                                         td(style='vertical-align: top; padding: 23px 10px 30px 0; color: #153643; font-family: Arial, sans-serif; font-size: 16px; line-height: 20px;')
-                                            img(src='http://graph.facebook.com/#{contractor.username}/picture', alt='')
+                                            img(src='http://graph.facebook.com/#{debtor.username}/picture', alt='')
                                         td(style='padding: 20px 0 30px 0; color: #153643; font-family: Arial, sans-serif; font-size: 16px; line-height: 20px;')
-                                            b #{name}
+                                            b #{entry.name}
                                             br
-                                            | #{description}
+                                            | #{entry.description}
                                     tr
                                         td(colspan='2', style='color: #ff3366; font-family: Arial, sans-serif; font-size: 24px; text-align:center;')
-                                            b  -#{value}zł
+                                            b  -#{entry.value}zł
                         tr
                             td(bgcolor='#006666', style='padding: 30px 30px 30px 30px;')
                                 table(border='0', cellpadding='0', cellspacing='0', width='100%')

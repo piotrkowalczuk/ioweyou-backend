@@ -56,8 +56,8 @@ summary = (req, res) ->
 
 
 create = (req, res) ->
-  req.checkBody('name', 'Invalid uid').notEmpty()
-  req.checkBody('value', 'Invalid uid').notEmpty().isInt()
+  req.checkBody('name', 'Invalid name').notEmpty()
+  req.checkBody('value', 'Invalid value').notEmpty().isFloat()
 
   if not req.validationErrors()
 
@@ -68,7 +68,6 @@ create = (req, res) ->
     value = req.body.value / (contractors.length + req.body.includeMe)
 
     userTable.friendshipsExists req.body.uid, userManager.usersToArrayOfIds(contractors), (exists) ->
-
       if exists
         for contractor in contractors
           values =
@@ -91,7 +90,7 @@ create = (req, res) ->
               res.mailer.send 'mails/creatingConfirmation', {
                 to: contractor.email,
                 subject: "#{user.first_name} #{user.last_name} add dept to you.",
-                title: name,
+                name: name,
                 description: description,
                 value: value,
                 contractor: contractor
@@ -114,7 +113,17 @@ accept = (req, res) ->
     userId = req.body.uid
 
     entryTable.accept userId, entryId, (statusCode, isModified) ->
-        res.status(statusCode).send {isModified: isModified}
+      if sisModified
+        entryTable.getById entryId, (entry)->
+          userTable.getById entry.lender_id, (lender)->
+            userTable.getById entry.debtor_id, (debtor)->
+              res.mailer.send 'mails/acceptance', {
+                to: lender.email,
+                subject: "#{debtor.first_name} #{debtor.last_name} accepted your entry.",
+                entry: entry,
+                debtor: debtor
+              }, (error) ->
+      res.status(statusCode).send {isModified: isModified}
   else
     res.status(404).send()
 
@@ -127,6 +136,17 @@ reject = (req, res) ->
     userId = req.body.uid
 
     entryTable.reject userId, entryId, (statusCode, isModified) ->
+      if isModified
+        entryTable.getById entryId, (entry)->
+          userTable.getById entry.lender_id, (lender)->
+            userTable.getById entry.debtor_id, (debtor)->
+              res.mailer.send 'mails/rejection', {
+                to: lender.email,
+                subject: "#{debtor.first_name} #{debtor.last_name} rejected your entry.",
+                entry: entry,
+                debtor: debtor
+                }, (error) ->
+
       res.status(statusCode).send {isModified: isModified}
   else
     res.status(404).send()
@@ -164,6 +184,17 @@ modify = (req, res) ->
       updated_at: moment().format('YYYY-MM-DD HH:mm:ss')
 
     entryTable.modify userId, entryId, values, (statusCode, isModified) ->
+      if isModified
+        entryTable.getById entryId, (entry)->
+          userTable.getById entry.lender_id, (lender)->
+            userTable.getById entry.debtor_id, (debtor)->
+              res.mailer.send 'mails/modification', {
+                to: lender.email,
+                subject: "#{debtor.first_name} #{debtor.last_name} modified your entry.",
+                entry: entry,
+                debtor: debtor
+                }, (error) ->
+
       res.status(statusCode).send {isModified: isModified}
   else
     res.status(400).send()

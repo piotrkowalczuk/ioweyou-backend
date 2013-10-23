@@ -12,10 +12,12 @@ module.exports = (app) ->
 
 
 login = (req, res) ->
+  ###
+    check if token match App id.
+  ###
   facebookToken = req.body.pass
   req.session = session
 
-  # check if token match App id.
   request.get facebook.getGraphAPI.AppRequest(facebookToken), (error, response, appResponseBody) ->
     appResponseObject = JSON.parse(appResponseBody)
     if not error && response.statusCode == 200
