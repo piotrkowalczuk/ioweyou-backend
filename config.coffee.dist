@@ -26,3 +26,8 @@ module.exports =
     auth:
       user: 'gmail.user@gmail.com',
       pass: 'userpass'
+  apn:
+    env: 'testing',
+    expiration: '1d',
+    reconnectDelay: '1s',
+    cacheTTL: '30m'

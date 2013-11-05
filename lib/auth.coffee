@@ -12,7 +12,7 @@ tokenAuth = (req, res, next) ->
 
   req.session = session
   req.assert('uid', 'Invalid uid').notEmpty().isInt()
-  req.assert('apiToken', 'Invalid uid').isUUIDv4()
+  req.assert('apiToken', 'Invalid apiToken').isUUIDv4()
 
   if not req.validationErrors()
     req.session.getUserApiToken req.param('uid'), (apiToken) ->

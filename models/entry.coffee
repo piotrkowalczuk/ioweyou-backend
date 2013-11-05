@@ -157,7 +157,7 @@ reject = (userId, entryId, next) ->
     .update({'rejected_at': new Date(), 'status': 2})
     .where('id', '=', entryId)
     .where('status', '=', 0) # open
-    .where('lender_id', '=', userId)
+    .where('debtor_id', '=', userId)
     .exec (error, reply) ->
       if not error and reply > 0
         next(200, true)

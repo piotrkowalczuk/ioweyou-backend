@@ -15,6 +15,7 @@
     "apnagent": "1.0.x",
     "express-validator": "*",
     "express-mailer": "0.2.x",
-    "jade": "*"
+    "jade": "*",
+    "apnagent": "*"
   }
 }

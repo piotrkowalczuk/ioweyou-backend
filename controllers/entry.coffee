@@ -4,6 +4,7 @@ auth = require '../lib/auth'
 entryTable = require '../models/entry'
 userTable = require '../models/user'
 userManager = require '../managers/user'
+device = require '../device'
 
 
 module.exports = (app) ->
@@ -87,9 +88,17 @@ create = (req, res) ->
         userTable.getById userId, (user) =>
           if user
             for contractor in contractors
+
+              subject = "#{user.first_name} #{user.last_name} add dept to you."
+
+              res.apn.createMessage()
+                .device(device)
+                .alert(subject)
+                .send()
+
               res.mailer.send 'mails/creatingConfirmation', {
                 to: contractor.email,
-                subject: "#{user.first_name} #{user.last_name} add dept to you.",
+                subject: subject,
                 name: name,
                 description: description,
                 value: value,
@@ -113,16 +122,27 @@ accept = (req, res) ->
     userId = req.body.uid
 
     entryTable.accept userId, entryId, (statusCode, isModified) ->
-      if sisModified
+      if isModified
         entryTable.getById entryId, (entry)->
           userTable.getById entry.lender_id, (lender)->
             userTable.getById entry.debtor_id, (debtor)->
+
+              subject = "#{debtor.first_name} #{debtor.last_name} accepted your entry."
+
+              res.apn.createMessage()
+                .device(device)
+                .alert(subject)
+                .send()
+
               res.mailer.send 'mails/acceptance', {
-                to: lender.email,
-                subject: "#{debtor.first_name} #{debtor.last_name} accepted your entry.",
+                to: 'p.kowalczuk.priv@gmail.com',
+                #to: lender.email,
+                subject: subject,
                 entry: entry,
                 debtor: debtor
               }, (error) ->
+
+
       res.status(statusCode).send {isModified: isModified}
   else
     res.status(404).send()
@@ -140,9 +160,18 @@ reject = (req, res) ->
         entryTable.getById entryId, (entry)->
           userTable.getById entry.lender_id, (lender)->
             userTable.getById entry.debtor_id, (debtor)->
+
+              subject = "#{debtor.first_name} #{debtor.last_name} rejected your entry."
+
+              res.apn.createMessage()
+                .device(device)
+                .alert(subject)
+                .send()
+
               res.mailer.send 'mails/rejection', {
-                to: lender.email,
-                subject: "#{debtor.first_name} #{debtor.last_name} rejected your entry.",
+                to: 'p.kowalczuk.priv@gmail.com',
+                #to: lender.email,
+                subject: subject,
                 entry: entry,
                 debtor: debtor
                 }, (error) ->
@@ -188,9 +217,17 @@ modify = (req, res) ->
         entryTable.getById entryId, (entry)->
           userTable.getById entry.lender_id, (lender)->
             userTable.getById entry.debtor_id, (debtor)->
+
+              subject = "#{debtor.first_name} #{debtor.last_name} modified your entry."
+
+              res.apn.createMessage()
+                .device(device)
+                .alert(subject)
+                .send()
+
               res.mailer.send 'mails/modification', {
                 to: lender.email,
-                subject: "#{debtor.first_name} #{debtor.last_name} modified your entry.",
+                subject: subject,
                 entry: entry,
                 debtor: debtor
                 }, (error) ->

@@ -3,3 +3,5 @@ node_modules/*
 npm-debug.log
 config.coffee
 dump.rdb
+certificates/*
+device.coffee
