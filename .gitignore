@@ -5,3 +5,4 @@ config.coffee
 dump.rdb
 certificates/*
 device.coffee
+test-reports.xml

@@ -6,6 +6,7 @@
   "dependencies": {
     "express": "3.3.x",
     "pg": "2.2.x",
+    "coffee-script": "*",
     "passport": "0.1.x",
     "request": "*",
     "redis": "*",
@@ -16,6 +17,11 @@
     "express-validator": "*",
     "express-mailer": "0.2.x",
     "jade": "*",
-    "apnagent": "*"
+    "apnagent": "*",
+    "mocha": "*",
+    "chai": "*"
+  },
+  "scripts": {
+    "test": "./node_modules/.bin/mocha --compilers coffee:coffee-script --recursive -R xunit test/ > test-reports.xml"
   }
 }
