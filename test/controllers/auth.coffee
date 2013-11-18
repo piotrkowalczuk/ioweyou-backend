@@ -1,7 +1,7 @@
 app = require('../app.coffee').app
 should = require('chai').should()
 http = require 'http'
-config = require '../config'
+config = require '../../config'
 
 defaultGetOptions = (path)->
   options =
