@@ -30,14 +30,10 @@ describe 'app', ->
     server.close()
     done()
 
-  it 'should exist', (done)->
-    should.exist(server)
-    done()
-
-  it "should return code 404", (done)->
-    headers = defaultGetOptions '/'
+  it "should return code 400, when call \"/login\" route without credentials", (done)->
+    headers = defaultGetOptions '/login'
     http.get headers, (res)->
       res.on 'data', (chunk)->
-        res.statusCode.should.eql(404)
+        res.statusCode.should.eql(400)
       res.on 'end', ()->
         done()
