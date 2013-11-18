@@ -1,4 +1,4 @@
-app = require('../app.coffee').app
+app = require('../../app.coffee').app
 should = require('chai').should()
 http = require 'http'
 config = require '../../config'
@@ -16,7 +16,7 @@ defaultGetOptions = (path)->
 
 server = null
 
-describe 'app', ->
+describe 'controllers/auth', ->
 
   before (done)->
     server = require('http').createServer(app)
