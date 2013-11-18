@@ -17,7 +17,7 @@ module.exports =
   facebook:
     appId: '',
     apiSecret: ''
-  mail:
+  mailer:
     from: 'ioweyou.pl@gmail.com'
     host: 'smtp.gmail.com'
     secureConnection: true

@@ -22,7 +22,3 @@ if device
 require('./controllers/entry')(app)
 require('./controllers/auth')(app)
 require('./controllers/user')(app)
-
-
-app.listen config.app.port
-console.info "Listening on port #{config.app.port}."

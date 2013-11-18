@@ -5,10 +5,10 @@ config = require '../config'
 
 defaultGetOptions = (path)->
   options =
-    "host": "localhost",
-    "port": config.port,
+    "host": "127.0.0.1",
+    "port": config.app.port,
     "path": path,
-    "method": "GET",
+    "method": "POST",
     "headers": {}
 
   options
@@ -20,7 +20,7 @@ describe 'app', ->
 
   before (done)->
     server = require('http').createServer(app)
-    server.listen config.port, (error, result)->
+    server.listen config.app.port, (error, result)->
       if error
         done error
       else
@@ -31,13 +31,13 @@ describe 'app', ->
     done()
 
   it 'should exist', (done)->
-    should.exist(app)
+    should.exist(server)
     done()
 
-  it 'should be listening at localhost:8000', (done)->
-    headers = defaultGetOptions '/'
+  it "should return code 400, when call without credentials", (done)->
+    headers = defaultGetOptions '/login'
     http.get headers, (res)->
       res.on 'data', (chunk)->
-        res.statusCode.should.eql(200)
+        res.statusCode.should.eql(400)
       res.on 'end', ()->
         done()
