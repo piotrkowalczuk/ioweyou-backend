@@ -11,7 +11,7 @@
     "request": "*",
     "redis": "*",
     "node-uuid": "*",
-    "knex": "0.2.0",
+    "knex": "0.4.13",
     "moment": "2.x",
     "apnagent": "1.0.x",
     "express-validator": "*",
@@ -19,7 +19,10 @@
     "jade": "*",
     "apnagent": "*",
     "mocha": "*",
-    "chai": "*"
+    "chai": "*",
+    "grunt": "~0.4.x",
+    "grunt-cli": "*",
+    "q": "*"
   },
   "scripts": {
     "test": "./node_modules/.bin/mocha --compilers coffee:coffee-script --recursive -R xunit test/ > test-reports.xml"
