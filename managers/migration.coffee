@@ -26,7 +26,7 @@ initialize = (next) ->
 setVersion = (version, next) ->
 
   fields =
-    version: version
+    version: 0
     updated_at: moment().format('YYYY-MM-DD HH:mm:ss')
 
   migrationTable.modify fields, (error, reply) ->

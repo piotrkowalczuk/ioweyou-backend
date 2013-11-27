@@ -1,4 +1,6 @@
 db = require '../../db'
+Q = require 'q'
+
 
 module.exports =
   version: 1
@@ -9,15 +11,18 @@ module.exports =
 
 exec = () ->
 
-  promise = db.postgres.schema.hasTable('auth_user').then (exists)->
-    if exists
-      db.postgres.schema.renameTable('auth_user', 'user').then ()->
-        console.log ' Table auth_user renamed to user successfully.'
+  done = Q () ->
+
+  done.then () ->
+    db.postgres.schema.hasTable('auth_user').then (exists)->
+      if exists
+        db.postgres.schema.renameTable('auth_user', 'user').then ()->
+          console.log ' Table auth_user renamed to user successfully.'
   .then () ->
-      db.postgres.schema.hasTable('auth_user').then (exists)->
-        if exists
-          db.postgres.schema.renameTable('entry_entry', 'entry').then ()->
-            console.log ' Table entry_entry renamed to entry successfully.'
+    db.postgres.schema.hasTable('auth_user').then (exists)->
+      if exists
+        db.postgres.schema.renameTable('entry_entry', 'entry').then ()->
+          console.log ' Table entry_entry renamed to entry successfully.'
   .then () ->
     db.postgres.schema.hasTable('announcement_announcement').then (exists)->
       if exists
@@ -85,4 +90,4 @@ exec = () ->
     db.postgres.schema.dropTableIfExists('user_userprofile').then ()->
       console.log ' Table user_userprofile droped successfully.'
 
-  return promise
+  return done

@@ -7,6 +7,8 @@ Q = require 'q'
 module.exports =
   initialize: (next) ->
     initialize(next)
+  syncdb: (next) ->
+    syncdb(next)
   migrate: (next) ->
     migrate(next)
 
@@ -14,6 +16,13 @@ module.exports =
 initialize = (next) ->
   migrationManager.initialize (message) ->
     next(message)
+
+
+syncdb = (next) ->
+  schema = require "../database/schema"
+  schema.exec().then ()->
+    next('Sync completed.')
+
 
 migrate = (next) ->
   migrations = []
@@ -40,4 +49,4 @@ migrate = (next) ->
       if migrationsCount > 0
         next("Database migration completed successfully.")
       else
-        next("Database schema is the latest version.")
+        next("Sync completed.")

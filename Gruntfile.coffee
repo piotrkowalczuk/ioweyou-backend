@@ -12,3 +12,9 @@ module.exports = (grunt) ->
     migration.migrate (message) ->
       grunt.log.writeln message
       done()
+
+  grunt.registerTask 'migration:syncdb', 'Synchronizes the database schema', () ->
+    done = this.async()
+    migration.syncdb (message) ->
+      grunt.log.writeln message
+      done()
