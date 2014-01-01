@@ -24,7 +24,12 @@
                 </nav>
             </div>
         </header>
-        <div class="container">
+        <div class="container" ng-controller="FlashController">
+            <div class="row">
+                <div class="col-lg-12">
+                    <alert ng-repeat="alert in alerts" class="animation" type="alert.type">{{alert.msg}}</alert>
+                </div>
+            </div>
             <div class="row">
                 <div class="col-lg-12">
                     <div ng-view class="animation"></div>
@@ -44,4 +49,5 @@
     <script src="/public/js/modules/user/services.js"></script>
     <script src="/public/js/modules/dashboard/controllers/DashboardController.js"></script>
     <script src="/public/js/modules/dashboard/controllers/RightController.js"></script>
+    <script src="/public/js/modules/flash/controllers/FlashController.js"></script>
 </html>
