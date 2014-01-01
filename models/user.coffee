@@ -14,16 +14,16 @@ module.exports =
 
 getBy = (fieldName, value, next) ->
   db.postgres()
-    .from('auth_user')
+    .from('user')
     .select(
-      'auth_user.id',
-      'auth_user.username',
-      'auth_user.first_name',
-      'auth_user.last_name',
-      'auth_user.email',
+      'user.id',
+      'user.username',
+      'user.first_name',
+      'user.last_name',
+      'user.email',
       'sau.uid'
     )
-    .join('social_auth_usersocialauth as sau', 'sau.user_id', '=', 'auth_user.id', 'left')
+    .join('user_social as sau', 'sau.user_id', '=', 'user.id', 'left')
     .where(fieldName, value)
     .exec (error, reply) ->
       if not error
@@ -33,7 +33,7 @@ getBy = (fieldName, value, next) ->
 
 
 getById = (id, next) ->
-  getBy('auth_user.id', id, next)
+  getBy('user.id', id, next)
 
 
 getByFacebookId = (value, next) ->
@@ -41,29 +41,29 @@ getByFacebookId = (value, next) ->
 
 
 getFriends = (id, next) ->
-  subQuery = db.postgres.Raw('
+  subQuery = db.postgres.raw('
     SELECT uf.creator_id AS friend
-    FROM user_friendship uf, auth_user au
-    WHERE au.id = uf.friend_id AND au.id = '+id+'
+    FROM user_friendship uf, "user" u
+    WHERE u.id = uf.friend_id AND u.id = '+id+'
     UNION
     SELECT uf.friend_id AS friend
-    FROM user_friendship uf, auth_user au
-    WHERE au.id = uf.creator_id AND au.id = '+id
+    FROM user_friendship uf, "user" u
+    WHERE u.id = uf.creator_id AND u.id = '+id
   )
 
   db.postgres()
-    .from('auth_user')
+    .from('user')
     .select(
-      'auth_user.id',
-      'auth_user.username',
-      'auth_user.first_name',
-      'auth_user.last_name',
-      'auth_user.email',
+      'user.id',
+      'user.username',
+      'user.first_name',
+      'user.last_name',
+      'user.email',
       'sau.uid'
     )
-    .whereIn('auth_user.id', subQuery)
-    .join('social_auth_usersocialauth as sau', 'sau.user_id', '=', 'auth_user.id', 'left')
-    .orderBy('auth_user.last_name', 'ASC')
+    .whereIn('user.id', subQuery)
+    .join('user_social as sau', 'sau.user_id', '=', 'user.id', 'left')
+    .orderBy('user.last_name', 'ASC')
     .exec (error, reply) ->
       if not error
         next(reply)

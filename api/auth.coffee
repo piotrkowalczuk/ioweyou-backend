@@ -8,13 +8,15 @@ db = require '../db'
 session = require '../models/session'
 
 module.exports = (app) ->
-  app.post '/login', login
+  app.post '/api/login', login
+  app.post '/api/register', register
 
 
 login = (req, res) ->
   ###
     check if token match App id.
   ###
+  console.log req.body
   facebookToken = req.body.pass
   req.session = session
 
@@ -28,7 +30,7 @@ login = (req, res) ->
             res.status(403).send('Forbiden')
           else
             userTable.getByFacebookId meResponseObject.id, (user)->
-              if not error
+              if user
 
                 userData =
                   username: user.username
@@ -41,11 +43,30 @@ login = (req, res) ->
 
                 req.session.setUserData userData.ioweyouId, userData
                 res.header "Content-Type", "application/json"
+                res.status 200
                 res.send userData
               else
-                res.send error
+                res.send false
 
         else
           res.status(response.statusCode).send meResponseBody
     else
       res.status(response.statusCode).send appResponseBody
+
+
+register = (req, res) ->
+
+  facebookToken = req.body.token
+
+  userTable.getByFacebookId facebookToken, (user)->
+
+    if not user
+      request.get facebook.getGraphAPI.AppRequest(facebookToken), (error, response, appResponseBody) ->
+        appResponseObject = JSON.parse(appResponseBody)
+        if not error && response.statusCode == 200
+          request.get facebook.getGraphAPI.MeRequest(facebookToken), (error, response, meResponseBody) ->
+            meResponseObject = JSON.parse(meResponseBody)
+            if not error && response.statusCode == 200
+              if not (appResponseObject.id is config.facebook.appId)
+                res.status(403).send('Forbiden')
+              else

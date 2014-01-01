@@ -3,7 +3,6 @@ config = require './config'
 expressValidator = require 'express-validator'
 mailer = require 'express-mailer'
 apn = require './lib/apn'
-device = require './device'
 
 
 app = exports.app = express()
@@ -16,11 +15,12 @@ app.use expressValidator()
 app.use '/public/', express.static(__dirname + '/public')
 
 mailer.extend app, config.mailer
+apn.extend app, config.apn
 
-if device
-  apn.extend app, config.apn
+require('./api/entry')(app)
+require('./api/auth')(app)
+require('./api/user')(app)
+require('./api/userClient')(app)
 
-require('./controllers/entry')(app)
-require('./controllers/auth')(app)
-require('./controllers/user')(app)app.get '/', (req, res)->
+app.get '/', (req, res)->
   res.sendfile './public/index.html'

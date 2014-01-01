@@ -9,7 +9,6 @@ module.exports =
 
 
 tokenAuth = (req, res, next) ->
-
   req.session = session
   req.assert('uid', 'Invalid uid').notEmpty().isInt()
   req.assert('apiToken', 'Invalid apiToken').isUUIDv4()

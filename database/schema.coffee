@@ -7,7 +7,6 @@ module.exports =
 
 
 exec = () ->
-
   db.postgres.schema.createTable 'migration', (table)->
     table.bigIncrements('id')
     table.integer('version')
@@ -75,7 +74,7 @@ exec = () ->
 
             db.postgres.schema.createTable 'entry', (table)->
               table.bigIncrements('id')
-              table.text('name')
+              table.string('name', 255).notNullable()
               table.text('description')
               table.float('value', 6, 2)
               table.tinyInteger('status')

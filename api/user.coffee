@@ -1,14 +1,14 @@
 config = require '../config'
 auth = require '../lib/auth'
-user = require '../models/user'
+userTable = require '../models/user'
 
 module.exports = (app) ->
-  app.get '/user/:id', getById
-  app.get '/friends', getFriends
+  app.get '/api/user/friends', getFriends
+  app.get '/api/user/:id', getById
 
 getById = (req, res) ->
   userId = req.params.id
-  user.getById userId, (user) =>
+  userTable.getById userId, (user) =>
     if user
       res.header "Content-Type", "application/json"
       res.send(user)
@@ -16,7 +16,7 @@ getById = (req, res) ->
       res.status(404).send()
 
 getFriends = (req, res) ->
-  user.getFriends req.query.uid, (friends) =>
+  userTable.getFriends req.query.uid, (friends) =>
     if friends
       res.header "Content-Type", "application/json"
       res.send(friends)

@@ -4,22 +4,24 @@ auth = require '../lib/auth'
 entryTable = require '../models/entry'
 userTable = require '../models/user'
 userManager = require '../managers/user'
-device = require '../device'
+clientTable = require '../models/userClient'
+session = require '../models/session'
 
 
 module.exports = (app) ->
   #GET
-  app.get '/entry/:id', auth.tokenAuth, one
-  app.get '/entries', auth.tokenAuth, list
-  app.get '/entries/summary', auth.tokenAuth, summary
+  app.get '/api/entry', auth.tokenAuth, list
+  app.get '/api/entry/summary', auth.tokenAuth, summary
+  app.get '/api/entry/count', auth.tokenAuth, count
+  app.get '/api/entry/:id', auth.tokenAuth, one
   #PUT
-  app.put '/entry',auth.tokenAuth, create
+  app.put '/api/entry',auth.tokenAuth, create
   #POST
-  app.post '/entry/:id', auth.tokenAuth, modify
-  app.post '/entry/accept/:id', auth.tokenAuth, accept
-  app.post '/entry/reject/:id', auth.tokenAuth, reject
+  app.post '/api/entry/:id', auth.tokenAuth, modify
+  app.post '/api/entry/accept/:id', auth.tokenAuth, accept
+  app.post '/api/entry/reject/:id', auth.tokenAuth, reject
   #DELETE
-  app.delete '/entry/:id', auth.tokenAuth, remove
+  app.delete '/api/entry/:id', auth.tokenAuth, remove
 
 one = (req, res) ->
   req.assert('id', 'Invalid entry ID').notEmpty().isInt()
@@ -39,13 +41,50 @@ one = (req, res) ->
 
 
 list = (req, res) ->
-  entryTable.getAll req.query.uid, (entries) ->
-    if entries
-      res.header "Content-Type", "application/json"
-      res.send(entries)
-    else
-      res.status(404).send()
 
+  if req.query.limit
+    req.assert('limit', {
+      notEmpty: 'Required.',
+      max: 'Maximum value is 100.',
+      isInt: 'Integer expected.'
+    }).max(100).isInt()
+
+  if req.query.offset
+    req.assert('offset', 'Invalid offset format. Expected integer').isInt()
+
+  if req.query.from
+    req.assert('from', 'Invalid from date format. Expected POSIX time').isInt()
+
+  if req.query.to
+    req.assert('to', 'Invalid from date format. Expected POSIX time').isInt()
+
+  if req.query.contractor
+    req.assert('contractor', 'Invalid contractor format. Expected integer.').isInt()
+
+  if req.query.status
+    req.assert('status', 'Invalid status format. Expected integer.').isInt()
+
+  if req.query.order
+    req.assert('order', 'Invalid order format. Expected asc or desc.').isIn(['asc', 'desc'])
+
+  if not req.validationErrors()
+    filters =
+      limit: req.query.limit
+      offset: req.query.offset
+      from: req.query.from
+      to: req.query.to
+      contractor: req.query.contractor
+      status: req.query.status
+      order: req.query.order
+
+    entryTable.getAll req.query.uid, filters, (entries) ->
+      if entries
+        res.header "Content-Type", "application/json"
+        res.send(entries)
+      else
+        res.status(404).send()
+  else
+    res.status(404).send(req.validationErrors())
 
 summary = (req, res) ->
   entryTable.getSummary req.query.uid, (summary) ->
@@ -55,6 +94,13 @@ summary = (req, res) ->
     else
       res.status(404).send()
 
+count = (req, res) ->
+  entryTable.getCount req.query.uid, (count) ->
+    if count
+      res.header "Content-Type", "application/json"
+      res.send(count)
+    else
+      res.status(404).send()
 
 create = (req, res) ->
   req.checkBody('name', 'Invalid name').notEmpty()
@@ -68,46 +114,52 @@ create = (req, res) ->
     description = req.body.description
     value = req.body.value / (contractors.length + req.body.includeMe)
 
-    userTable.friendshipsExists req.body.uid, userManager.usersToArrayOfIds(contractors), (exists) ->
+    userTable.friendshipsExists userId, userManager.usersToArrayOfIds(contractors), (exists) ->
       if exists
+        console.log contractors
         for contractor in contractors
-          values =
-            name: name
-            description: description
-            value: value
-            status: 0
-            lender_id: userId
-            debtor_id: contractor.id
-            created_at: moment().format('YYYY-MM-DD HH:mm:ss')
-            updated_at: moment().format('YYYY-MM-DD HH:mm:ss')
+          userTable.getById contractor.id, (dbContractor) =>
+            if dbContractor
+              values =
+                name: name
+                description: description
+                value: value
+                status: 0
+                lender_id: userId
+                debtor_id: dbContractor.id
+                created_at: moment().format('YYYY-MM-DD HH:mm:ss')
+                updated_at: moment().format('YYYY-MM-DD HH:mm:ss')
 
-          entryTable.create values, (statusCode, isCreated)->
-            if statusCode is not 200
-              res.status(statusCode).send {isCreated: isCreated}
+              entryTable.create values, (statusCode, entryId)->
+                if statusCode is not 200
+                  res.status(statusCode).send {entryId: entryId}
+                else
+                  session.getUserData userId, (user) ->
+                    console.log user
+                    subject = "#{user.first_name} #{user.last_name} add dept to you."
 
-        userTable.getById userId, (user) =>
-          if user
-            for contractor in contractors
+                    clientTable.getByUserId dbContractor.id, (client)->
+                      console.log 'Wysypanie push notyfikacji', client, dbContractor
+                      if client
+                        res.apn.createMessage()
+                          .device(client.token)
+                          .alert(subject)
+                          .set('entryId', entryId)
+                          .send()
 
-              subject = "#{user.first_name} #{user.last_name} add dept to you."
+                      res.mailer.send 'mails/creatingConfirmation', {
+                        to: dbContractor.email,
+                        subject: subject,
+                        name: name,
+                        description: description,
+                        value: value,
+                        contractor: dbContractor
+                      }, (error) ->
 
-              res.apn.createMessage()
-                .device(device)
-                .alert(subject)
-                .send()
+            else
+              res.status(404).send()
 
-              res.mailer.send 'mails/creatingConfirmation', {
-                to: contractor.email,
-                subject: subject,
-                name: name,
-                description: description,
-                value: value,
-                contractor: contractor
-              }, (error) ->
-          else
-            res.status(404).send()
-
-        res.status(200).send {isCreated: true}
+          res.status(200).send {isCreated: true}
       else
         res.send(404).send()
   else
