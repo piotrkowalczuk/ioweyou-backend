@@ -117,6 +117,7 @@ getAll = (id, filters, next) ->
     .where (sub) ->
       sub.where('debtor_id', id)
         .orWhere('lender_id', id)
+    .where('status', '!=', 3)
     .limit(filters.limit or 10)
     .offset(filters.offset or 0)
     .orderBy('created_at', filters.order or 'desc')
@@ -134,6 +135,7 @@ getAll = (id, filters, next) ->
 
   if filters.status
     query.where('status', '=', filters.status)
+
 
   query.exec (error, reply) ->
       if not error
