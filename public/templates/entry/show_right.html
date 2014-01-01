@@ -1,0 +1,15 @@
+<div class="row">
+    <div class="col-lg-12">
+        <h3>Menu</h3>
+        <div ng->
+                <a ng-hide="isAcceptable()" href="#" class="btn btn-lg btn-success btn-block disabled"><i class="icon-ok icon-white"></i> Already {{ getStatus(entry.status) }}</a>
+                <a ng-show="isAcceptable()" class="btn btn-lg btn-success btn-block"><i class="icon-ok icon-white"></i> Zaakceptuj</a>
+                <a ng-hide="isRejectable()" class="btn btn-lg btn-danger btn-block disabled"><i class="icon-ok icon-white"></i> Already {{ getStatus(entry.status) }}, can not be rejected</a>
+                <a ng-show="isRejectable()" class="btn btn-lg btn-danger btn-block"><i class="icon-ban-circle icon-white"></i> Odrzuć</a>
+                <a ng-hide="isEditable()" class="btn btn-lg btn-primary btn-block disabled"><i class="icon-ok icon-white"></i> Already {{ getStatus(entry.status) }}, can not be edited</a>
+                <a ng-show="isEditable()" class="btn btn-lg btn-primary btn-block"><i class="icon-ok icon-white"></i> Edit</a>
+                <a ng-hide="isDeletable()" class="btn btn-lg btn-inverse btn-block disabled"><i class="icon-edit icon-white"></i> Already {{ getStatus(entry.status) }}, can not be deleted</a>
+                <a ng-show="isDeletable()" class="btn btn-lg btn-inverse btn-block"><i class="icon-remove icon-white"></i> Delete</a>
+        </div>
+    </div>
+</div>

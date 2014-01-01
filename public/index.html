@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en" ng-app='IOUApp'>
+       <head>
+           <meta charset="utf-8" />
+           <meta name="viewport" content="width=device-width" />
+           <title>I Owe YOU!</title>
+
+           <script src="/public/vendors/angular/angular.min.js"></script>
+           <script src="/public/vendors/angular/angular-route.min.js"></script>
+           <script src="/public/vendors/angular/angular-cookies.js"></script>
+           <script src="/public/vendors/angular/angular-animate.js"></script>
+           <script src="/public/vendors/ui-bootstrap/js/ui-bootstrap-0.9.0.js"></script>
+           <script src="/public/vendors/ui-bootstrap/js/ui-bootstrap-tpls-0.9.0.js"></script>
+           <script src="http://pc035860.github.io/angular-easyfb/angular-easyfb.min.js"></script>
+
+           <link rel="stylesheet" href="/public/vendors/bootstrap/css/bootstrap.min.css"/>
+           <link rel="stylesheet" href="/public/css/main.css"/>
+       </head>
+    <body>
+        <header class="navbar navbar-inverse navbar-static-top" role="banner" ng-controller="AuthenticationController">
+            <div class="container">
+                <nav class="navbar-inverse" role="navigation" style="height: 1px;">
+                    <div ng-include="'public/templates/auth/navbar.html'"></div>
+                </nav>
+            </div>
+        </header>
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-12">
+                    <div ng-view class="animation"></div>
+                </div>
+            </div>
+        </div>
+    </body>
+    <script src="/public/js/app.js"></script>
+    <script src="/public/js/controller.js"></script>
+    <script src="/public/js/modules/entry/services.js"></script>
+    <script src="/public/js/modules/entry/controllers/EntryListController.js"></script>
+    <script src="/public/js/modules/entry/controllers/EntryCreateController.js"></script>
+    <script src="/public/js/modules/entry/controllers/EntryShowController.js"></script>
+    <script src="/public/js/modules/auth/controller.js"></script>
+    <script src="/public/js/modules/auth/services.js"></script>
+    <script src="/public/js/modules/splash/controller.js"></script>
+    <script src="/public/js/modules/user/services.js"></script>
+    <script src="/public/js/modules/dashboard/controllers/DashboardController.js"></script>
+    <script src="/public/js/modules/dashboard/controllers/RightController.js"></script>
+</html>

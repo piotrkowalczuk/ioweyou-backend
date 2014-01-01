@@ -1,0 +1,31 @@
+<div class="row">
+    <div class="col-lg-12">
+        <h3>Podsumowanie </h3>
+        <div ng-show="summary == 0" class="statistics zero">
+            {{ summary }} zł
+        </div>
+
+        <div ng-show="summary > 0" class="statistics income">
+            {{ summary }} zł
+        </div>
+
+        <div ng-show="summary < 0" class="statistics outcome">
+            {{ summary }} zł
+        </div>
+
+    </div>
+</div>
+<div class="row">
+    <div class="col-lg-12">
+        <h3>Menu</h3>
+        <a href="#/entry/create" class="btn btn-lg btn-primary btn-block">
+            Ktoś jest Ci winny pieniądze?
+        </a>
+        <a
+                class="btn btn-lg btn-success btn-block"
+                role="button"
+                data-toggle="modal">
+            Oddaleś pieniądze?
+        </a>
+    </div>
+</div>

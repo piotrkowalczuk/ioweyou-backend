@@ -1,0 +1,15 @@
+<!-- Brand and toggle get grouped for better mobile display -->
+<div class="navbar-header">
+    <a class="navbar-brand" href="#">I Owe YOU!</a>
+    <ul class="nav navbar-nav">
+        <li ng-show="isLoggedIn()" ng-class="isActiveRoute('/')"><a href="#/">Dashboard</a></li>
+        <li ng-show="isLoggedIn()" ng-class="isActiveRoute('/entry/list')"><a href="#/entry/list">Transakcje</a></li>
+        <li ng-show="isLoggedIn()" ng-class="isActiveRoute('/friends')"><a href="#/friends">Znajomi</a></li>
+    </ul>
+</div>
+<div class="navbar-right">
+    <p class="navbar-text navbar-right" ng-show="isLoggedIn()">
+        Zalogowany jako: <a href="http://facebook.com/{{ username }}" class="navbar-link">{{ first_name }} {{ last_name }}</a>
+        <button class="btn btn-xs" ng-click="logout()">Wyloguj</button>
+    </p>
+</div>

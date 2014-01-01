@@ -13,6 +13,7 @@ app.set('view engine', 'jade')
 
 app.use express.bodyParser()
 app.use expressValidator()
+app.use '/public/', express.static(__dirname + '/public')
 
 mailer.extend app, config.mailer
 
@@ -21,4 +22,5 @@ if device
 
 require('./controllers/entry')(app)
 require('./controllers/auth')(app)
-require('./controllers/user')(app)
+require('./controllers/user')(app)app.get '/', (req, res)->
+  res.sendfile './public/index.html'

@@ -1,0 +1,70 @@
+<div class="page-header">
+    <h1>{{ entry.name }}</h1>
+</div>
+<div class="row">
+    <div class="col-lg-8">
+        <h3>Szczegóły </h3>
+        <table class="table">
+            <tr>
+                <td>
+                    <strong>Pożyczkodawca</strong>
+                </td>
+                <td>
+                    <strong>Dłużnik</strong>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <img src="http://graph.facebook.com/{{ entry.lender_username }}/picture" alt="" class="img-thumbnail"/> <a href="https://www.facebook.com/{{ entry.lender.username }}">{{ entry.lender.profile.get_fullname }}</a>
+                </td>
+                <td>
+                    <img src="http://graph.facebook.com/{{ entry.debtor_username }}/picture" alt="" class="img-thumbnail"/> <a href="https://www.facebook.com/{{ entry.debtor.username }}">{{ entry.debtor.profile.get_fullname }}</a>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <strong>Name</strong>
+                </td>
+                <td>
+                    {{ entry.name }}
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <strong>Value</strong>
+                </td>
+                <td>
+                    {{ entry.value }} zł
+                </td>
+            </tr>
+
+            <tr ng-class="{ warning: entry.status == 0 , success: entry.status == 1 , error: entry.status == 2 }">
+                <td>
+                    <strong>Status</strong>
+                </td>
+                <td>
+                    {{ getStatus(entry.status) }}
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <strong>Description</strong>
+                </td>
+                <td>
+                    {{ entry.description }}
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <strong>Created on</strong>
+                </td>
+                <td>
+                    {{ entry.created_at }}
+                </td>
+            </tr>
+        </table>
+    </div>
+    <div class="col-lg-4" ng-include=" 'public/templates/entry/show_right.html' ">
+
+    </div>
+</div>

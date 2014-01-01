@@ -1,0 +1,24 @@
+<div class="page-header">
+    <h1>Transakcje</h1>
+</div>
+<div class="row">
+    <div class="col-lg-8">
+        <ul class="pager">
+            <li class="previous"><a ng-click="prevPage()">&larr; Page {{ page - 1 }}</a></li>
+            <li>Page {{ page }}/{{ nbOfPages() }}</li>
+            <li class="next"><a ng-click="nextPage()">Page {{ page + 1 }} &rarr;</a></li>
+        </ul>
+        <ul class="list-unstyled">
+            <li ng-repeat="entry in entries" class="animation">
+                <div ng-include=" 'public/templates/entry/table.html' "></div>
+            </li>
+        </ul>
+    </div>
+    <div class="col-lg-4">
+        <div class="row">
+            <div class="col-lg-12 entry-filters" ng-include=" 'public/templates/entry/filters.html' ">
+
+            </div>
+        </div>
+    </div>
+</div>

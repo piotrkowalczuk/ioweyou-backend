@@ -1,0 +1,65 @@
+<ol class="breadcrumb">
+    <li><a href="#/">Dashboard</a></li>
+    <li><a href="#/entry/list">Wpis</a></li>
+    <li class="active">Dodaj</li>
+</ol>
+<div class="page-header">
+    <h1>Dodaj wpis</h1>
+</div>
+<form novalidate role="form">
+    <div class="row">
+        <div class="col-lg-4">
+            <div class="panel panel-default">
+                <div class="panel-heading">Wypełnij pola w formularzu:</div>
+                <div class="row" style="padding-top: 30px; padding-bottom: 30px;">
+                    <div class="col-lg-10 col-lg-offset-1">
+                        <div class="form-group">
+                            <label for="entry-name-input">Nazwa:</label>
+                            <input type="text" class="form-control" id="entry-name-input" placeholder="Wpisz nazwe wpisu." ng-model="enrty.name" required>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="entry-value-input">Kwota:</label>
+                            <input type="text" class="form-control" id="entry-value-input" placeholder="Podaj kwote." ng-model="enrty.value" required>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="entry-desciption-input">Opis:</label>
+                            <textarea class="form-control" id="entry-desciption-input" placeholder="Opis." ng-model="enrty.description" required>
+                            </textarea>
+                        </div>
+
+                        <div class="pull-right">
+                            <button class="btn btn-warning" ng-click="reset()">Wyczyść</button>
+                            <button class="btn btn-primary" ng-click="update(user)">Zapisz</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-8">
+            <div class="panel panel-default">
+                <div class="panel-heading">Wybierz znajomych:</div>
+                <div class="panel-body">
+                    Zaznacz znajomych którzy są tobie winni pieniądze.
+                    Kwota którą podasz zostanie podzielona równo pomiędzy osoby przez ciebie wskazane.
+                </div>
+                <!-- List group -->
+                <div class="list-group">
+                    <div class="list-group-item" style="width: 50%; display: block; float: left;" ng-repeat="friend in friends">
+                        <div class="checkbox">
+                            <label>
+                                <img
+                                        src="http://graph.facebook.com/{{ friend.username }}/picture"
+                                        alt=""
+                                        class="img-thumbnail"/>
+                                <input type="checkbox"> {{friend.first_name}} {{friend.last_name}}
+                            </label>
+                        </div>
+                    </div>
+                    <div style="clear: both;"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+</form>
