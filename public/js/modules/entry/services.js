@@ -4,7 +4,7 @@ angular.module('IOUApp')
 
         var credentials = AuthFactory.getUserCredentials;
 
-        var status = ['otwarte', 'zamknięte', 'odrzucone', 'usunięte'];
+        var status = ['Otwarte', 'Zaakceptowane', 'Odrzucone', 'Usunięte'];
 
         return {
             get : function(params) {
@@ -31,6 +31,12 @@ angular.module('IOUApp')
                 entry.uid = credentials().uid;
 
                 return $http.post('/api/entry', entry);
+            },
+            accept : function(id) {
+                return $http.post('/api/entry/accept/' + id, credentials());
+            },
+            reject : function(id) {
+                return $http.post('/api/entry/reject/' + id, credentials());
             },
             delete : function(id) {
                 return $http.delete('/api/entry/' + id, {

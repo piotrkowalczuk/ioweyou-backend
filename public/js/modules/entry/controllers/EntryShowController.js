@@ -64,11 +64,11 @@ angular.module('IOUApp')
         };
 
         var isRejectable = function() {
-            return (!isAccepted() || isRejected() || isDeleted());
+            return !(isRejected() || isAccepted() || isDeleted());
         };
 
         var isDeletable = function() {
-            return (!isAccepted() || isDeleted());
+            return !(isAccepted() || isDeleted());
         };
 
         var isDebtor = function() {
@@ -79,6 +79,14 @@ angular.module('IOUApp')
             return  $scope.userData.ioweyouId == $scope.entry.lender_id;
         };
 
+        var acceptEntry = function() {
+            EntryFactory.accept($scope.entry.id)
+                .success(function(){
+                    $scope.$emit('flashMessage', 'success', 'Entry accepted successfully.');
+                    fetchEntry();
+                });
+        };
+
         var deleteEntry = function() {
             EntryFactory.delete($scope.entry.id)
                 .success(function(){
@@ -87,8 +95,19 @@ angular.module('IOUApp')
                 });
         };
 
+        var rejectEntry = function() {
+            EntryFactory.reject($scope.entry.id)
+                .success(function(){
+                    $scope.$emit('flashMessage', 'success', 'Entry rejected successfully.');
+                    fetchEntry();
+                });
+        };
         $scope.getStatus = getStatus;
 
         $scope.deleteEntry = deleteEntry;
+
+        $scope.rejectEntry = rejectEntry;
+
+        $scope.acceptEntry = acceptEntry;
     }
 );

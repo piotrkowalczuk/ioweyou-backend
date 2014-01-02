@@ -2,16 +2,16 @@
     <div class="col-lg-12">
         <h3>Menu</h3>
         <div ng-show="isDebtor">
-            <a ng-hide="isAcceptable" class="btn btn-lg btn-success btn-block disabled"><i class="icon-ok icon-white"></i> Already {{ getStatus(entry.status) }}</a>
-            <a ng-show="isAcceptable" class="btn btn-lg btn-success btn-block"><i class="icon-ok icon-white"></i> Zaakceptuj</a>
-            <a ng-hide="isRejectable" class="btn btn-lg btn-danger btn-block disabled"><i class="icon-ok icon-white"></i> Already {{ getStatus(entry.status) }}, can not be rejected</a>
-            <a ng-show="isRejectable" class="btn btn-lg btn-danger btn-block"><i class="icon-ban-circle icon-white"></i> Odrzuć</a>
+            <a ng-hide="isAcceptable" class="btn btn-lg btn-success btn-block disabled"><i class="icon-ok icon-white"></i> {{ getStatus(entry.status) }}</a>
+            <a ng-show="isAcceptable" ng-click="acceptEntry()" class="btn btn-lg btn-success btn-block"><i class="icon-ok icon-white"></i> Zaakceptuj</a>
+            <a ng-hide="isRejectable" class="btn btn-lg btn-danger btn-block disabled"><i class="icon-ok icon-white"></i> {{ getStatus(entry.status) }}, nie można odrzucić</a>
+            <a ng-show="isRejectable" ng-click="rejectEntry()" class="btn btn-lg btn-danger btn-block"><i class="icon-ban-circle icon-white"></i> Odrzuć</a>
         </div>
         <div ng-show="isLender">
-            <a ng-hide="isEditable" class="btn btn-lg btn-primary btn-block disabled"><i class="icon-ok icon-white"></i> Already {{ getStatus(entry.status) }}, can not be edited</a>
-            <a ng-show="isEditable" class="btn btn-lg btn-primary btn-block"><i class="icon-ok icon-white"></i> Edit</a>
-            <a ng-hide="isDeletable" class="btn btn-lg btn-inverse btn-block disabled"><i class="icon-edit icon-white"></i> Already {{ getStatus(entry.status) }}, can not be deleted</a>
-            <a ng-show="isDeletable" ng-click="deleteEntry()" class="btn btn-lg btn-inverse btn-block"><i class="icon-remove icon-white"></i> Delete</a>
+            <a ng-hide="isEditable" class="btn btn-lg btn-primary btn-block disabled"><i class="icon-ok icon-white"></i> {{ getStatus(entry.status) }}, nie może zostać zmienione</a>
+            <a ng-show="isEditable" class="btn btn-lg btn-primary btn-block "><i class="icon-ok icon-white"></i> Zmień</a>
+            <a ng-hide="isDeletable" class="btn btn-lg btn-inverse btn-block disabled"><i class="icon-edit icon-white"></i> {{ getStatus(entry.status) }}, nie może zostać usunięte</a>
+            <a ng-show="isDeletable" ng-click="deleteEntry()" class="btn btn-lg btn-inverse btn-block"><i class="icon-remove icon-white"></i> Usuń</a>
         </div>
     </div>
 </div>

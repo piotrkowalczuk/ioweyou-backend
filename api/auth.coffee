@@ -16,7 +16,6 @@ login = (req, res) ->
   ###
     check if token match App id.
   ###
-  console.log req.body
   facebookToken = req.body.pass
   req.session = session
 
