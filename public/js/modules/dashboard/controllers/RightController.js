@@ -1,11 +1,10 @@
 angular.module('IOUApp')
 
-    .controller('RightController', ['$scope', 'EntryFactory',
-        function($scope, EntryFactory) {
+    .controller('RightController', function($scope, Entry) {
 
-            EntryFactory.getSummary()
+            Entry.getSummary()
                 .success(function(response){
                     $scope.summary = response.summary;
                 });
         }
-    ]);
+    );

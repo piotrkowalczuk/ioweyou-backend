@@ -2,7 +2,7 @@
     <h1>{{ entry.name }}</h1>
 </div>
 <div class="row">
-    <div class="col-lg-8">
+    <div class="col-lg-8 col-md-8">
         <h3>Szczegóły </h3>
         <table class="table">
             <tr>
@@ -59,12 +59,12 @@
                     <strong>Utworzony</strong>
                 </td>
                 <td>
-                    {{ entry.created_at }}
+                    {{ entry.created_at|date:'dd-MM-yyyy HH:mm:ss' }}
                 </td>
             </tr>
         </table>
     </div>
-    <div class="col-lg-4" ng-include=" 'public/templates/entry/show_right.html' ">
+    <div class="col-lg-4 col-md-4" ng-include=" 'public/templates/entry/show_right.html' ">
 
     </div>
 </div>

@@ -9,7 +9,12 @@ angular.module('IOUApp', ['ngRoute', 'ezfb', 'ngCookies', 'ngAnimate', 'ui.boots
         })
         .when('/entry/create', {
             controller: 'EntryCreateController',
-            templateUrl: 'public/templates/entry/create.html',
+            templateUrl: 'public/templates/entry/createMultiple.html',
+            publicAccess: false
+        })
+        .when('/entry/give-back', {
+            controller: 'EntryCreateController',
+            templateUrl: 'public/templates/entry/createOne.html',
             publicAccess: false
         })
         .when('/entry/show/:id', {
@@ -41,7 +46,7 @@ angular.module('IOUApp', ['ngRoute', 'ezfb', 'ngCookies', 'ngAnimate', 'ui.boots
                 return;
             } else {
                 if(!AuthFactory.isLogged()) {
-                    window.location.href = '/splash';
+                    $location.path('/splash');
                 }
             }
         });

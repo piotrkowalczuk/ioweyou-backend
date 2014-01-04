@@ -44,7 +44,6 @@ list = (req, res) ->
 
   if req.query.limit
     req.assert('limit', {
-      notEmpty: 'Required.',
       max: 'Maximum value is 100.',
       isInt: 'Integer expected.'
     }).max(100).isInt()
@@ -71,11 +70,12 @@ list = (req, res) ->
     filters =
       limit: req.query.limit
       offset: req.query.offset
-      from: req.query.from
-      to: req.query.to
+      from: Number(req.query.from)
+      to: Number(req.query.to)
       contractor: req.query.contractor
       status: req.query.status
       order: req.query.order
+      name: req.query.name
 
     entryTable.getAll req.query.uid, filters, (entries) ->
       if entries
@@ -103,8 +103,10 @@ count = (req, res) ->
       res.status(404).send()
 
 create = (req, res) ->
-  req.checkBody('name', 'Invalid name').notEmpty()
-  req.checkBody('value', 'Invalid value').notEmpty().isFloat()
+  req.checkBody('name', 'Nazwa nie może być pusta.').notEmpty()
+  req.checkBody('value', 'Kwota nie może być pusta. Może być liczbą całkowitą lub zmienno przecinkową.').isFloat()
+  req.checkBody('includeMe', '').isInt()
+  req.checkBody('contractors', 'Musisz wybrać chociaż jedną osobę.').notEmpty()
 
   if not req.validationErrors()
 
@@ -112,13 +114,18 @@ create = (req, res) ->
     name = req.body.name
     contractors = req.body.contractors
     description = req.body.description
-    value = req.body.value / (contractors.length + req.body.includeMe)
+    value = req.body.value / (contractors.length + parseInt(req.body.includeMe))
 
-    userTable.friendshipsExists userId, userManager.usersToArrayOfIds(contractors), (exists) ->
+    console.log req.body.value
+    console.log contractors.length
+    console.log contractors.length + req.body.includeMe
+    console.log req.body.includeMe
+    console.log value
+
+    userTable.friendshipsExists userId, contractors, (exists) ->
       if exists
-        console.log contractors
         for contractor in contractors
-          userTable.getById contractor.id, (dbContractor) =>
+          userTable.getById contractor, (dbContractor) =>
             if dbContractor
               values =
                 name: name
@@ -135,11 +142,9 @@ create = (req, res) ->
                   res.status(statusCode).send {entryId: entryId}
                 else
                   session.getUserData userId, (user) ->
-                    console.log user
                     subject = "#{user.first_name} #{user.last_name} add dept to you."
 
                     clientTable.getByUserId dbContractor.id, (client)->
-                      console.log 'Wysypanie push notyfikacji', client, dbContractor
                       if client
                         res.apn.createMessage()
                           .device(client.token)
@@ -161,9 +166,9 @@ create = (req, res) ->
 
           res.status(200).send {isCreated: true}
       else
-        res.send(404).send()
+        res.status(404).send()
   else
-    res.send(404).send()
+    res.status(404).send(req.validationErrors(true))
 
 
 accept = (req, res) ->
@@ -248,8 +253,8 @@ remove = (req, res) ->
 
 modify = (req, res) ->
   req.assert('id', 'Invalid uid').notEmpty().isInt()
-  req.checkBody('name', 'Invalid uid').notEmpty()
-  req.checkBody('value', 'Invalid uid').notEmpty().isInt()
+  req.checkBody('name', 'Nazwa nie może być pusta.').notEmpty()
+  req.checkBody('value', 'Kwota nie może być pusta. Może być liczbą całkowitą lub zmienno przecinkową').isFloat()
 
   if not req.validationErrors()
     entryId = req.params.id
@@ -272,13 +277,13 @@ modify = (req, res) ->
 
               subject = "#{debtor.first_name} #{debtor.last_name} modified your entry."
 
-              res.apn.createMessage()
-                .device(device)
-                .alert(subject)
-                .send()
+#              res.apn.createMessage()
+#                .device(device)
+#                .alert(subject)
+#                .send()
 
               res.mailer.send 'mails/modification', {
-                to: lender.email,
+                to: debtor.email,
                 subject: subject,
                 entry: entry,
                 debtor: debtor
@@ -286,7 +291,7 @@ modify = (req, res) ->
 
       res.status(statusCode).send {isModified: isModified}
   else
-    res.status(400).send()
+    res.status(400).send(req.validationErrors())
 
 
 

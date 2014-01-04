@@ -1,20 +1,84 @@
 <h3>Filtry</h3>
-<form id="ui-dashboard-filter" class="form">
+<form id="ui-dashboard-filter" novalidate class="form">
     <div class="form-group">
         <label for="entry-filter-name-input">Nazwa</label>
-        <input
-                type="text"
-                class="form-control"
-                id="entry-filter-name-input"
-                placeholder="Podaj przybliżoną nazwę."
-                ng-model="enrty.name">
+        <div class="input-group">
+            <input
+                    type="text"
+                    class="form-control"
+                    id="entry-filter-name-input"
+                    placeholder="Podaj przybliżoną nazwę."
+                    ng-model="filter.name">
+            <span class="input-group-btn">
+                <button
+                        class="btn btn-default"
+                        type="button"
+                        ng-click="fetchEntries()">
+                    <i class="glyphicon glyphicon-search"></i>
+                </button>
+            </span>
+        </div>
     </div>
     <div class="form-group">
         <label for="entry-filter-status-input">Status</label>
-        <input
-                type="text"
+        <select
                 class="form-control"
                 id="entry-filter-status-input"
-                ng-model="enrty.status">
+                ng-change="fetchEntries()"
+                ng-model="filter.status">
+            <option
+                    ng-repeat="status in statuses"
+                    value="{{$index}}">
+                {{status}}
+            </option>
+        </select>
+    </div>
+
+    <div class="form-group">
+        <label for="entry-filter-status-input">Od</label>
+        <p class="input-group">
+            <input
+                    ng-change="fetchEntries()"
+                    type="text"
+                    class="form-control"
+                    datepicker-popup="{{format}}"
+                    ng-model="filter.from"
+                    show-weeks="false"
+                    is-open="form.from.open"
+                    min="2013-01-01"
+                    max="'2014-02-01'"
+                    datepicker-options="dateOptions"
+                    date-disabled="disabled(date, mode)"
+                    show-button-bar="false"/>
+              <span class="input-group-btn">
+                <button class="btn btn-default" ng-click="openDatepickerFrom($event)">
+                    <i class="glyphicon glyphicon-calendar"></i>
+                </button>
+              </span>
+        </p>
+    </div>
+
+    <div class="form-group">
+        <label for="entry-filter-status-input">Do</label>
+        <p class="input-group">
+            <input
+                    ng-change="fetchEntries()"
+                    type="text"
+                    class="form-control"
+                    datepicker-popup="{{format}}"
+                    ng-model="filter.to"
+                    show-weeks="false"
+                    is-open="form.to.open"
+                    min="2013-01-01"
+                    max="'2014-02-01'"
+                    datepicker-options="dateOptions"
+                    date-disabled="disabled(date, mode)"
+                    show-button-bar="false" />
+              <span class="input-group-btn">
+                <button class="btn btn-default" ng-click="openDatepickerTo($event)">
+                    <i class="glyphicon glyphicon-calendar"></i>
+                </button>
+              </span>
+        </p>
     </div>
 </form>

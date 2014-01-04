@@ -123,10 +123,10 @@ getAll = (id, filters, next) ->
     .orderBy('created_at', filters.order or 'desc')
 
   if filters.from
-    query.where('created_at', '>', moment.unix(filters.from).toISOString())
+    query.where('created_at', '>',  moment(filters.from).toISOString())
 
   if filters.to
-    query.where('created_at', '<', moment.unix(filters.to).toISOString())
+    query.where('created_at', '<', moment(filters.to).toISOString())
 
   if filters.contractor
     query.where (sub) ->
@@ -136,6 +136,8 @@ getAll = (id, filters, next) ->
   if filters.status
     query.where('status', '=', filters.status)
 
+  if filters.name
+    query.where('name', 'ilike', '%'+filters.name+'%')
 
   query.exec (error, reply) ->
       if not error

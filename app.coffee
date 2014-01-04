@@ -3,6 +3,7 @@ config = require './config'
 expressValidator = require 'express-validator'
 mailer = require 'express-mailer'
 apn = require './lib/apn'
+validator = require './lib/validator'
 
 
 app = exports.app = express()
@@ -11,8 +12,10 @@ app.set('views', __dirname + '/views')
 app.set('view engine', 'jade')
 
 app.use express.bodyParser()
-app.use expressValidator()
 app.use '/public/', express.static(__dirname + '/public')
+app.use expressValidator({
+  errorFormatter: validator.errorFormatter
+})
 
 mailer.extend app, config.mailer
 apn.extend app, config.apn

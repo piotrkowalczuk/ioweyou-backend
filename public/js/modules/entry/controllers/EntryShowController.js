@@ -1,15 +1,36 @@
 angular.module('IOUApp')
 
     .controller('EntryShowController',
-    function($scope, $routeParams, $location, EntryFactory, AuthFactory) {
+    function($scope, $routeParams, $location, Entry, AuthFactory) {
         $scope.userData = AuthFactory.getUserData();
         $scope.entry = {};
+        $scope.formData = {};
+        $scope.formErrors = {};
+        $scope.formVisibility = false;
+
+        $scope.buttonSave = {
+            label: 'Zmień',
+            disabled: false
+        }
+
+        $scope.form = {
+            from: {
+                open: false
+            },
+            to: {
+                open: false
+            }
+        }
+
+
 
         var fetchEntry = function() {
 
-            EntryFactory.getOne($routeParams.id)
+            Entry.getOne($routeParams.id)
                 .success(function(entry) {
                     $scope.entry = entry;
+
+                    $scope.formData = entry;
 
                     $scope.isOpen = isOpen();
 
@@ -36,7 +57,7 @@ angular.module('IOUApp')
         fetchEntry();
 
         var getStatus = function(statusId) {
-            return EntryFactory.getStatus(statusId);
+            return Entry.getStatus(statusId);
         };
 
         var isOpen = function() {
@@ -80,7 +101,7 @@ angular.module('IOUApp')
         };
 
         var acceptEntry = function() {
-            EntryFactory.accept($scope.entry.id)
+            Entry.accept($scope.entry.id)
                 .success(function(){
                     $scope.$emit('flashMessage', 'success', 'Entry accepted successfully.');
                     fetchEntry();
@@ -88,7 +109,7 @@ angular.module('IOUApp')
         };
 
         var deleteEntry = function() {
-            EntryFactory.delete($scope.entry.id)
+            Entry.delete($scope.entry.id)
                 .success(function(){
                     $scope.$emit('flashMessage', 'success', 'Entry deleted successfully.');
                     $location.path('/entry/list');
@@ -96,7 +117,7 @@ angular.module('IOUApp')
         };
 
         var rejectEntry = function() {
-            EntryFactory.reject($scope.entry.id)
+            Entry.reject($scope.entry.id)
                 .success(function(){
                     $scope.$emit('flashMessage', 'success', 'Entry rejected successfully.');
                     fetchEntry();
@@ -109,5 +130,53 @@ angular.module('IOUApp')
         $scope.rejectEntry = rejectEntry;
 
         $scope.acceptEntry = acceptEntry;
+
+        $scope.modifyEntry = function() {
+
+            $scope.buttonSave.label = 'Przetwarzanie...';
+            $scope.buttonSave.disabled = true;
+
+            Entry.modify($scope.entry.id, $scope.formData)
+                .success(function(data) {
+                    if(data.isModified) {
+                        $scope.$emit('flashMessage', 'success', 'Wpis został zmodyfikowany poprawnie.');
+                        $location.path('/');
+                    } else {
+                        $scope.$emit('flashMessage', 'danger', 'Żądanie zostało wysłane porpawnie, jednak wpis nie został utworzony. Spróbuj ponownie.');
+                        $scope.buttonSave.label = 'Zapisz';
+                        $scope.buttonSave.disabled = false;
+                    }
+                }).error(function(errors) {
+                    $scope.formErrors = errors;
+                    $scope.buttonSave.label = 'Zapisz';
+                    $scope.buttonSave.disabled = false;
+                });
+        };
+
+        $scope.hasError = function hasError(fieldName) {
+            if($scope.formErrors[fieldName]) {
+                return true;
+            }
+
+            return false;
+        }
+
+        $scope.toggleForm = function toggleForm() {
+            $scope.formVisibility = !$scope.formVisibility;
+        }
+
+        $scope.openDatepickerFrom = function openDatepickerFrom($event) {
+            $event.preventDefault();
+            $event.stopPropagation();
+
+            $scope.form.from.open = true;
+        };
+
+        $scope.openDatepickerTo = function openDatepickerTo($event) {
+            $event.preventDefault();
+            $event.stopPropagation();
+
+            $scope.form.to.open = true;
+        };
     }
 );

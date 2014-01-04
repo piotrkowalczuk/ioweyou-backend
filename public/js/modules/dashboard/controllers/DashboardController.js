@@ -1,10 +1,9 @@
 angular.module('IOUApp')
 
-    .controller('DashboardController', ['$scope', 'EntryFactory', 'AuthFactory',
-        function($scope, EntryFactory, AuthFactory) {
+    .controller('DashboardController', function($scope, Entry, AuthFactory) {
 
             $scope.fetchEntries = function(status) {
-                EntryFactory.get({limit: 5, status: status})
+                Entry.get({limit: 5, status: status})
                     .success(function(entries) {
                         $scope.entries = entries;
                     });
@@ -16,7 +15,7 @@ angular.module('IOUApp')
 
 
             $scope.getStatus = function(statusId) {
-                return EntryFactory.getStatus(statusId);
+                return Entry.getStatus(statusId);
             }
 
 
@@ -33,4 +32,4 @@ angular.module('IOUApp')
             }
 
         }
-    ]);
+    );

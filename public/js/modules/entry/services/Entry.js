@@ -1,6 +1,6 @@
 angular.module('IOUApp')
 
-    .factory('EntryFactory', function($http, AuthFactory) {
+    .factory('Entry', function($http, AuthFactory) {
 
         var credentials = AuthFactory.getUserCredentials;
 
@@ -21,16 +21,26 @@ angular.module('IOUApp')
                     params: credentials()
                 });
             },
-            count : function() {
+            count : function(params) {
+                params = params || {};
+                params.apiToken = credentials().apiToken;
+                params.uid = credentials().uid;
+
                 return $http.get('/api/entry/count', {
-                    params: credentials()
+                    params: params
                 });
             },
             create : function(entry) {
                 entry.apiToken = credentials().apiToken;
                 entry.uid = credentials().uid;
 
-                return $http.post('/api/entry', entry);
+                return $http.put('/api/entry', entry);
+            },
+            modify : function(entryId, data) {
+                data.apiToken = credentials().apiToken;
+                data.uid = credentials().uid;
+
+                return $http.post('/api/entry/'+entryId, data);
             },
             accept : function(id) {
                 return $http.post('/api/entry/accept/' + id, credentials());
