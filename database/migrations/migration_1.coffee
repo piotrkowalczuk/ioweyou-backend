@@ -22,7 +22,7 @@ exec = () ->
         console.log ' Table auth_user does not exist.'
 
   done = done.then () ->
-    db.postgres.schema.hasTable('auth_user').then (exists)->
+    db.postgres.schema.hasTable('entry_entry').then (exists)->
       if exists
         db.postgres.schema.renameTable('entry_entry', 'entry').then ()->
           console.log ' Table entry_entry renamed to entry successfully.'
