@@ -11,16 +11,23 @@ module.exports =
 
 initialize = (next) ->
 
-  fields =
-    version: 0
-    created_at: moment().format('YYYY-MM-DD HH:mm:ss')
-    updated_at: null
+  db.postgres.schema.createTable 'migration', (table)->
+    table.bigIncrements('id')
+    table.integer('version')
+    table.timestamps()
+    .then ()->
+      console.log 'Migration table created successfully.'
 
-  migrationTable.create fields, (error, reply) ->
-    if not error
-      next('Migration initialized successfully.')
-    else
-      next(error)
+      fields =
+        version: 0
+        created_at: moment().format('YYYY-MM-DD HH:mm:ss')
+        updated_at: null
+
+      migrationTable.create fields, (error, reply) ->
+        if not error
+          next('Migration initialized successfully.')
+        else
+          next(error)
 
 
 setVersion = (version, next) ->
