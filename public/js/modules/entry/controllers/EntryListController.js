@@ -1,8 +1,11 @@
 angular.module('IOUApp')
 
     .controller('EntryListController', function($scope, $http, Entry, EntryFilter, AuthFactory) {
+            $scope.page = 0;
 
-            var queryParams = {};
+            $scope.limit = 8;
+
+            $scope.queryParams = {};
 
             $scope.filter = {};
 
@@ -11,23 +14,26 @@ angular.module('IOUApp')
             $scope.userData = AuthFactory.getUserData();
 
             $scope.updateQueryParams = function() {
-                EntryFilter.addFilter(queryParams, 'limit', $scope.limit);
-                EntryFilter.addFilter(queryParams, 'offset', $scope.offset());
-                EntryFilter.addFilter(queryParams, 'status', $scope.filter.status);
-                EntryFilter.addFilter(queryParams, 'name', $scope.filter.name);
-                EntryFilter.addTimestampFilter(queryParams, 'from', $scope.filter.from);
-                EntryFilter.addTimestampFilter(queryParams, 'to', $scope.filter.to, 86399000);
+                var offset = $scope.offset();
+
+                EntryFilter.addFilter($scope.queryParams, 'limit', $scope.limit);
+                EntryFilter.addFilter($scope.queryParams, 'offset', offset);
+                EntryFilter.addFilter($scope.queryParams, 'status', $scope.filter.status);
+                EntryFilter.addFilter($scope.queryParams, 'name', $scope.filter.name);
+                EntryFilter.addTimestampFilter($scope.queryParams, 'from', $scope.filter.from);
+                EntryFilter.addTimestampFilter($scope.queryParams, 'to', $scope.filter.to, 86399000);
+                console.log($scope.queryParams);
             }
 
             $scope.fetchNumberOfEntries = function() {
-                Entry.count(queryParams)
+                Entry.count($scope.queryParams)
                     .success(function(result) {
                         $scope.nbOfEntries = result.aggregate;
                     });
             }
 
             $scope.fetchEntries = function() {
-                Entry.get(queryParams)
+                Entry.get($scope.queryParams)
                     .success(function(entries) {
                         $scope.entries = entries;
                     });
@@ -46,17 +52,15 @@ angular.module('IOUApp')
 
             $scope.prevPage = function() {
                 $scope.page--;
+                $scope.updateQueryParams();
                 $scope.fetchEntries();
             }
 
             $scope.nextPage = function() {
                 $scope.page++;
+                $scope.updateQueryParams();
                 $scope.fetchEntries();
             }
-
-            $scope.page = 0;
-            $scope.limit = 8;
-
 
             $scope.offset = function() {
                 return $scope.page * 8;

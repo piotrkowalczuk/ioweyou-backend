@@ -220,8 +220,7 @@ accept = (req, res) ->
                     .send()
 
               res.mailer.send 'mails/acceptance', {
-                to: 'p.kowalczuk.priv@gmail.com',
-                #to: lender.email,
+                to: lender.email,
                 subject: subject,
                 entry: entry,
                 debtor: debtor
@@ -256,8 +255,7 @@ reject = (req, res) ->
                     .send()
 
               res.mailer.send 'mails/rejection', {
-                to: 'p.kowalczuk.priv@gmail.com',
-                #to: lender.email,
+                to: lender.email,
                 subject: subject,
                 entry: entry,
                 debtor: debtor

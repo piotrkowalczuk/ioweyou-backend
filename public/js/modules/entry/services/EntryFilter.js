@@ -8,7 +8,7 @@ angular.module('IOUApp')
             return statuses
         }
         var addFilter = function(filter, name, value) {
-            if(value) {
+            if(typeof value != 'undefined') {
                 filter[name] = value;
             }
         }
