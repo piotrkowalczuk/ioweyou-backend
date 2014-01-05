@@ -2,7 +2,7 @@
     <div class="panel-heading">Wypełnij pola w formularzu:</div>
     <div class="row" style="padding-top: 30px; padding-bottom: 30px;">
         <div class="col-lg-10 col-md-10 col-sm-10 col-xs-10 col-lg-offset-1 col-md-offset-1 col-sm-offset-1 col-xs-offset-1">
-            <div class="form-group" ng-class="{ has-error: hasError('name')}">
+            <div class="form-group">
                 <label for="entry-name-input">Nazwa:</label>
                 <input type="text" class="form-control" id="entry-name-input" ng-model="entry.name" placeholder="Nazwe wpisu." ng-model="entry.name" required>
                 <span class="help-block alert alert-danger" ng-show="hasError('name')">{{formErrors.name.message}}</span>

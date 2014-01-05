@@ -4,11 +4,13 @@
             <img
                     ng-if="entry.lender_id == userData.ioweyouId"
                     ng-src="http://graph.facebook.com/{{ entry.debtor_username }}/picture"
+                    ng-src-error="http://profile.ak.fbcdn.net/static-ak/rsrc.php/v2/yo/r/UlIqmHJn-SK.gif"
                     alt=""
                     class="img-thumbnail"/>
             <img
                     ng-if="entry.debtor_id == userData.ioweyouId"
                     ng-src="http://graph.facebook.com/{{ entry.lender_username }}/picture"
+                    ng-src-error="http://profile.ak.fbcdn.net/static-ak/rsrc.php/v2/yo/r/UlIqmHJn-SK.gif"
                     alt=""
                     class="img-thumbnail"/>
         </td>
