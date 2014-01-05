@@ -2,40 +2,42 @@ angular.module('IOUApp')
 
     .controller('EntryListController', function($scope, $http, Entry, EntryFilter, AuthFactory) {
 
+            var queryParams = {};
+
             $scope.filter = {};
-            $scope.filters = {};
+
             $scope.statuses = EntryFilter.getStatuses();
 
             $scope.userData = AuthFactory.getUserData();
 
-            $scope.fetchNumberOfEntries = function(filters) {
-                Entry.count(filters)
+            $scope.updateQueryParams = function() {
+                EntryFilter.addFilter(queryParams, 'limit', $scope.limit);
+                EntryFilter.addFilter(queryParams, 'offset', $scope.offset());
+                EntryFilter.addFilter(queryParams, 'status', $scope.filter.status);
+                EntryFilter.addFilter(queryParams, 'name', $scope.filter.name);
+                EntryFilter.addTimestampFilter(queryParams, 'from', $scope.filter.from);
+                EntryFilter.addTimestampFilter(queryParams, 'to', $scope.filter.to, 86399000);
+            }
+
+            $scope.fetchNumberOfEntries = function() {
+                Entry.count(queryParams)
                     .success(function(result) {
                         $scope.nbOfEntries = result.aggregate;
                     });
             }
 
-            getTimestamp = function(date){
-                if(date instanceof Date) {
-                    return date.getTime();
-                }
-                return null;
-            }
             $scope.fetchEntries = function() {
-                var filters = {};
-
-                EntryFilter.addFilter(filters, 'limit', $scope.limit);
-                EntryFilter.addFilter(filters, 'offset', $scope.offset());
-                EntryFilter.addFilter(filters, 'status', $scope.filter.status);
-                EntryFilter.addFilter(filters, 'name', $scope.filter.name);
-                EntryFilter.addTimestampFilter(filters, 'from', $scope.filter.from);
-                EntryFilter.addTimestampFilter(filters, 'to', $scope.filter.to, 86399000);
-
-                Entry.get(filters)
+                Entry.get(queryParams)
                     .success(function(entries) {
                         $scope.entries = entries;
                     });
-                $scope.fetchNumberOfEntries(filters);
+            }
+
+            $scope.fetchData = function() {
+                $scope.page = 0;
+                $scope.updateQueryParams();
+                $scope.fetchEntries();
+                $scope.fetchNumberOfEntries();
             }
 
             $scope.getStatus = function(statusId) {
@@ -63,7 +65,9 @@ angular.module('IOUApp')
                 var tmp = $scope.nbOfEntries / $scope.limit;
                 return Math.ceil(tmp * 10) / 10;
             };
+
             $scope.fetchEntries();
+            $scope.fetchNumberOfEntries();
         }
     );
 

@@ -22,15 +22,13 @@ angular.module('IOUApp')
             }
         }
 
-
-
         var fetchEntry = function() {
 
             Entry.getOne($routeParams.id)
                 .success(function(entry) {
                     $scope.entry = entry;
 
-                    $scope.formData = entry;
+                    $scope.formData = angular.copy(entry);
 
                     $scope.isOpen = isOpen();
 
@@ -140,7 +138,9 @@ angular.module('IOUApp')
                 .success(function(data) {
                     if(data.isModified) {
                         $scope.$emit('flashMessage', 'success', 'Wpis został zmodyfikowany poprawnie.');
-                        $location.path('/');
+                        $scope.buttonSave.disabled = false;
+                        $scope.buttonSave.label = 'Zapisz';
+                        fetchEntry();
                     } else {
                         $scope.$emit('flashMessage', 'danger', 'Żądanie zostało wysłane porpawnie, jednak wpis nie został utworzony. Spróbuj ponownie.');
                         $scope.buttonSave.label = 'Zapisz';

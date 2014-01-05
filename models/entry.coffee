@@ -11,8 +11,8 @@ module.exports =
     getAll(id, filters, next)
   getSummary: (userId, next) ->
     getSummary(userId, next)
-  getCount: (userId, next) ->
-    getCount(userId, next)
+  getCount: (userId, filters, next) ->
+    getCount(userId, filters, next)
   create: (fields, next) ->
     create(fields, next)
   modify: (userId, entryId, fields, next) ->
@@ -97,15 +97,33 @@ getUserEntryById = (userId, entryId, next) ->
       else
         next(false)
 
-getCount = (userId, next) ->
+getCount = (userId, filters, next) ->
 
-  db.postgres()
+  query = db.postgres()
     .from('entry')
     .count('id')
     .where (sub) ->
       sub.where('debtor_id', userId)
         .orWhere('lender_id', userId)
-    .exec (error, reply) ->
+
+  if filters.from
+    query.where('created_at', '>',  moment(filters.from).toISOString())
+
+  if filters.to
+    query.where('created_at', '<', moment(filters.to).toISOString())
+
+  if filters.contractor
+    query.where (sub) ->
+      sub.where('debtor_id', filters.contractor)
+        .orWhere('lender_id', filters.contractor)
+
+  if filters.status
+    query.where('status', '=', filters.status)
+
+  if filters.name
+    query.where('name', 'ilike', '%'+filters.name+'%')
+
+  query.exec (error, reply) ->
       if not error
         next(reply[0])
       else

@@ -13,7 +13,7 @@
                 <button
                         class="btn btn-default"
                         type="button"
-                        ng-click="fetchEntries()">
+                        ng-click="fetchData()">
                     <i class="glyphicon glyphicon-search"></i>
                 </button>
             </span>
@@ -24,7 +24,7 @@
         <select
                 class="form-control"
                 id="entry-filter-status-input"
-                ng-change="fetchEntries()"
+                ng-change="fetchData()"
                 ng-model="filter.status">
             <option
                     ng-repeat="status in statuses"
@@ -38,7 +38,7 @@
         <label for="entry-filter-status-input">Od</label>
         <p class="input-group">
             <input
-                    ng-change="fetchEntries()"
+                    ng-change="fetchData()"
                     type="text"
                     class="form-control"
                     datepicker-popup="{{format}}"
@@ -62,7 +62,7 @@
         <label for="entry-filter-status-input">Do</label>
         <p class="input-group">
             <input
-                    ng-change="fetchEntries()"
+                    ng-change="fetchData()"
                     type="text"
                     class="form-control"
                     datepicker-popup="{{format}}"

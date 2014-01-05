@@ -2,7 +2,12 @@ html {
     overflow-y: scroll;
 }
 
-.nav, .pagination, .carousel a { cursor: pointer; }
+.nav,
+.pagination,
+.carousel a,
+.pager a {
+    cursor: pointer;
+}
 
 .avatar {
     height: 50px;

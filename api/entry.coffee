@@ -95,12 +95,38 @@ summary = (req, res) ->
       res.status(404).send()
 
 count = (req, res) ->
-  entryTable.getCount req.query.uid, (count) ->
-    if count
-      res.header "Content-Type", "application/json"
-      res.send(count)
-    else
-      res.status(404).send()
+
+  if req.query.from
+    req.assert('from', 'Invalid from date format. Expected POSIX time').isInt()
+
+  if req.query.to
+    req.assert('to', 'Invalid from date format. Expected POSIX time').isInt()
+
+  if req.query.contractor
+    req.assert('contractor', 'Invalid contractor format. Expected integer.').isInt()
+
+  if req.query.status
+    req.assert('status', 'Invalid status format. Expected integer.').isInt()
+
+  if not req.validationErrors()
+    filters =
+      limit: req.query.limit
+      offset: req.query.offset
+      from: Number(req.query.from)
+      to: Number(req.query.to)
+      contractor: req.query.contractor
+      status: req.query.status
+      order: req.query.order
+      name: req.query.name
+
+    entryTable.getCount req.query.uid, filters, (count) ->
+      if count
+        res.header "Content-Type", "application/json"
+        res.send(count)
+      else
+        res.status(404).send()
+  else
+    res.status(404).send(req.validationErrors())
 
 create = (req, res) ->
   req.checkBody('name', 'Nazwa nie może być pusta.').notEmpty()
@@ -186,10 +212,12 @@ accept = (req, res) ->
 
               subject = "#{debtor.first_name} #{debtor.last_name} accepted your entry."
 
-              res.apn.createMessage()
-                .device(device)
-                .alert(subject)
-                .send()
+              clientTable.getByUserId entry.lender_id, (client)->
+                if client
+                  res.apn.createMessage()
+                    .device(client.token)
+                    .alert(subject)
+                    .send()
 
               res.mailer.send 'mails/acceptance', {
                 to: 'p.kowalczuk.priv@gmail.com',
@@ -220,10 +248,12 @@ reject = (req, res) ->
 
               subject = "#{debtor.first_name} #{debtor.last_name} rejected your entry."
 
-              res.apn.createMessage()
-                .device(device)
-                .alert(subject)
-                .send()
+              clientTable.getByUserId entry.lender_id, (client)->
+                if client
+                  res.apn.createMessage()
+                    .device(client.token)
+                    .alert(subject)
+                    .send()
 
               res.mailer.send 'mails/rejection', {
                 to: 'p.kowalczuk.priv@gmail.com',
@@ -275,12 +305,14 @@ modify = (req, res) ->
           userTable.getById entry.lender_id, (lender)->
             userTable.getById entry.debtor_id, (debtor)->
 
-              subject = "#{debtor.first_name} #{debtor.last_name} modified your entry."
+              subject = "#{debtor.first_name} #{debtor.last_name} modified entry."
 
-#              res.apn.createMessage()
-#                .device(device)
-#                .alert(subject)
-#                .send()
+              clientTable.getByUserId debtor.id, (client)->
+                if client
+                  res.apn.createMessage()
+                    .device(client.token)
+                    .alert(subject)
+                    .send()
 
               res.mailer.send 'mails/modification', {
                 to: debtor.email,
