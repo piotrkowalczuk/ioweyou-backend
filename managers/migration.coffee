@@ -1,6 +1,6 @@
 migrationTable = require '../models/migration'
 moment = require 'moment'
-
+db = require '../db'
 
 module.exports =
   initialize: (next) ->
