@@ -3,10 +3,11 @@ angular.module('IOUApp')
     .controller('AuthenticationController', ['$scope', '$FB', '$location', 'AuthFactory',
         function($scope, $FB, $location, AuthFactory) {
 
-
+            $scope.isCollapsed = true;
             $scope.first_name = AuthFactory.getUserProperty('first_name');
             $scope.last_name = AuthFactory.getUserProperty('last_name');
             $scope.username = AuthFactory.getUserProperty('username');
+            $scope.userId = AuthFactory.getUserProperty('ioweyouId');
 
             $scope.login = function () {
                 $FB.login(function (res) {
