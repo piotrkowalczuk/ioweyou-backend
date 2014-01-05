@@ -11,23 +11,27 @@ module.exports =
 
 initialize = (next) ->
 
-  db.postgres.schema.createTable 'migration', (table)->
-    table.bigIncrements('id')
-    table.integer('version')
-    table.timestamps()
-    .then ()->
-      console.log 'Migration table created successfully.'
+  db.postgres.schema.hasTable('migration').then (exists)->
+    if not exists
+      db.postgres.schema.createTable 'migration', (table)->
+        table.bigIncrements('id')
+        table.integer('version')
+        table.timestamps()
+      .then ()->
+        console.log 'Migration table created successfully.'
 
-      fields =
-        version: 0
-        created_at: moment().format('YYYY-MM-DD HH:mm:ss')
-        updated_at: null
+        fields =
+          version: 0
+          created_at: moment().format('YYYY-MM-DD HH:mm:ss')
+          updated_at: null
 
-      migrationTable.create fields, (error, reply) ->
-        if not error
-          next('Migration initialized successfully.')
-        else
-          next(error)
+        migrationTable.create fields, (error, reply) ->
+          if not error
+            next('Migration initialized successfully.')
+          else
+            next(error)
+    else
+      next('Table migration already exists.')
 
 
 setVersion = (version, next) ->
