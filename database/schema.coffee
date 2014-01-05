@@ -7,7 +7,7 @@ module.exports =
 
 
 exec = () ->
-  db.postgres.schema.createTable 'migration', (table)->
+  db.postgres.schema.createTable 'migration', (table)->                        `
     table.bigIncrements('id')
     table.integer('version')
     table.timestamps()
