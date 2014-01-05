@@ -3,12 +3,12 @@
         <td rowspan="2" style="width:70px;">
             <img
                     ng-if="entry.lender_id == userData.ioweyouId"
-                    src="http://graph.facebook.com/{{ entry.debtor_username }}/picture"
+                    ng-src="http://graph.facebook.com/{{ entry.debtor_username }}/picture"
                     alt=""
                     class="img-thumbnail"/>
             <img
                     ng-if="entry.debtor_id == userData.ioweyouId"
-                    src="http://graph.facebook.com/{{ entry.lender_username }}/picture"
+                    ng-src="http://graph.facebook.com/{{ entry.lender_username }}/picture"
                     alt=""
                     class="img-thumbnail"/>
         </td>
