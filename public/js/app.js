@@ -1,5 +1,5 @@
 angular.module('IOUApp', ['ngRoute', 'ezfb', 'ngCookies', 'ngAnimate', 'ui.bootstrap'])
-    .config( function IOUAppConfig ( $routeProvider, $FBProvider ) {
+    .config( function IOUAppConfig ( $routeProvider, $httpProvider, $FBProvider ) {
         'use strict';
 
         $routeProvider.when('/entry/list', {
@@ -39,6 +39,8 @@ angular.module('IOUApp', ['ngRoute', 'ezfb', 'ngCookies', 'ngAnimate', 'ui.boots
         $FBProvider.setInitParams({
             appId: '108723412644911'
         });
+
+        $httpProvider.interceptors.push('HttpResponseInterceptor');
     })
     .run( function($rootScope, $location, AuthFactory ) {
         $rootScope.$on("$routeChangeStart", function (event, next, current) {

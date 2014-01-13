@@ -10,7 +10,7 @@
     <a class="navbar-brand" href="#">I Owe YOU!</a>
 </div>
 
-<div class="collapse navbar-collapse navbar-right" collapse="isCollapsed">
+<div class="collapse navbar-collapse navbar-right" collapse="isCollapsed" ng-controller="NavbarController">
     <ul ng-if="isLoggedIn()" class="nav navbar-nav">
         <li ng-class="isActiveRoute('/')"><a href="#/">Tablica</a></li>
         <li ng-class="isActiveRoute('/entry/list')"><a href="#/entry/list">Transakcje</a></li>

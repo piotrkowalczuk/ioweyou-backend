@@ -19,6 +19,22 @@
             </span>
         </div>
     </div>
+
+    <div class="form-group">
+        <label for="entry-filter-contractor-input">Znajomi</label>
+        <select
+                class="form-control"
+                id="entry-filter-contractor-input"
+                ng-change="fetchData()"
+                ng-model="filter.contractor">
+            <option
+                    ng-repeat="contractor in contractors"
+                    value="{{contractor.id}}">
+                {{contractor.first_name}} {{contractor.last_name}}
+            </option>
+        </select>
+    </div>
+
     <div class="form-group">
         <label for="entry-filter-status-input">Status</label>
         <select

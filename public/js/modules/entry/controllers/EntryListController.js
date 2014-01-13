@@ -1,6 +1,7 @@
 angular.module('IOUApp')
 
-    .controller('EntryListController', function($scope, $http, Entry, EntryFilter, AuthFactory) {
+    .controller('EntryListController',
+        function($scope, $http, Entry, EntryFilter, AuthFactory, UserFactory) {
             $scope.page = 0;
 
             $scope.limit = 8;
@@ -13,6 +14,11 @@ angular.module('IOUApp')
 
             $scope.userData = AuthFactory.getUserData();
 
+            UserFactory.getFriends()
+                .success(function(friends){
+                    $scope.contractors = friends;
+                });
+
             $scope.updateQueryParams = function() {
                 var offset = $scope.offset();
 
@@ -20,6 +26,7 @@ angular.module('IOUApp')
                 EntryFilter.addFilter($scope.queryParams, 'offset', offset);
                 EntryFilter.addFilter($scope.queryParams, 'status', $scope.filter.status);
                 EntryFilter.addFilter($scope.queryParams, 'name', $scope.filter.name);
+                EntryFilter.addFilter($scope.queryParams, 'contractor', $scope.filter.contractor);
                 EntryFilter.addTimestampFilter($scope.queryParams, 'from', $scope.filter.from);
                 EntryFilter.addTimestampFilter($scope.queryParams, 'to', $scope.filter.to, 86399000);
                 console.log($scope.queryParams);
