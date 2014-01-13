@@ -178,14 +178,14 @@ create = (req, res) ->
                           .set('entryId', entryId)
                           .send()
 
-                      res.mailer.send 'mails/creatingConfirmation', {
-                        to: dbContractor.email,
-                        subject: subject,
-                        name: name,
-                        description: description,
-                        value: value,
-                        contractor: dbContractor
-                      }, (error) ->
+                    res.mailer.send 'mails/creatingConfirmation', {
+                      to: dbContractor.email,
+                      subject: subject,
+                      name: name,
+                      description: description,
+                      value: value,
+                      contractor: dbContractor
+                    }, (error) ->
 
             else
               res.status(404).send()
@@ -209,7 +209,6 @@ accept = (req, res) ->
         entryTable.getById entryId, (entry)->
           userTable.getById entry.lender_id, (lender)->
             userTable.getById entry.debtor_id, (debtor)->
-
               subject = "#{debtor.first_name} #{debtor.last_name} accepted your entry."
 
               clientTable.getByUserId entry.lender_id, (client)->
@@ -225,7 +224,6 @@ accept = (req, res) ->
                 entry: entry,
                 debtor: debtor
               }, (error) ->
-
 
       res.status(statusCode).send {isModified: isModified}
   else
