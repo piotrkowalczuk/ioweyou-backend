@@ -18,6 +18,6 @@ tokenAuth = (req, res, next) ->
       if apiToken is req.param('apiToken')
         next()
       else
-        res.status(403).send 'Forbiden'
+        res.status(403).send 'Forbidden'
   else
     res.status(400).send 'Bad Request'

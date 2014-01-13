@@ -21,12 +21,12 @@ login = (req, res) ->
 
   request.get facebook.getGraphAPI.AppRequest(facebookToken), (error, response, appResponseBody) ->
     appResponseObject = JSON.parse(appResponseBody)
-    if not error && response.statusCode == 200
+    if not error and response.statusCode == 200
       request.get facebook.getGraphAPI.MeRequest(facebookToken), (error, response, meResponseBody) ->
         meResponseObject = JSON.parse(meResponseBody)
-        if not error && response.statusCode == 200
-          if not (appResponseObject.id is config.facebook.appId)
-            res.status(403).send('Forbiden')
+        if not error and response.statusCode == 200
+          if appResponseObject.id isnt config.facebook.appId
+            res.status(403).send('Forbidden')
           else
             userTable.getByFacebookId meResponseObject.id, (user)->
               if user
@@ -67,5 +67,5 @@ register = (req, res) ->
             meResponseObject = JSON.parse(meResponseBody)
             if not error && response.statusCode == 200
               if not (appResponseObject.id is config.facebook.appId)
-                res.status(403).send('Forbiden')
+                res.status(403).send('Forbidden')
               else
