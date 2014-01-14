@@ -87,7 +87,7 @@ angular.module('IOUApp')
         };
 
         var isDeletable = function() {
-            return !(isAccepted() || isDeleted());
+            return !(isAccepted() || isRejected() || isDeleted());
         };
 
         var isDebtor = function() {
