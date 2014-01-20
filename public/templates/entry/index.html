@@ -8,9 +8,9 @@
 <div class="row">
     <div class="col-lg-8 col-md-8">
         <ul class="pager" ng-show="entries.length">
-            <li class="previous"><a ng-hide="page <= 0" ng-click="prevPage()">&larr; Page {{ page - 1 }}</a></li>
-            <li>Page {{ page }}/{{ nbOfPages() | number:0 }}</li>
-            <li class="next"><a ng-hide="page >= nbOfPages()" ng-click="nextPage()">Page {{ page + 1 }} &rarr;</a></li>
+            <li class="previous"><a ng-hide="page <= 0" ng-click="prevPage()">&larr; Page {{ page }}</a></li>
+            <li>Page {{ page + 1 }}/{{ nbOfPages() | number:0 }}</li>
+            <li class="next"><a ng-hide="page >= nbOfPages()" ng-click="nextPage()">Page {{ page + 2 }} &rarr;</a></li>
         </ul>
         <ul class="list-unstyled">
             <li ng-repeat="entry in entries" class="animation">
