@@ -1,9 +1,16 @@
 angular.module('IOUApp')
 
     .factory('User', function($rootScope, $location, $cookieStore) {
+
+        var login = function(userData) {
+            setUserData(userData);
+            $rootScope.$broadcast('login');
+            $location.path('/');
+        }
+
         var logout = function() {
             removeUserData();
-            $rootScope.$emit('logout');
+            $rootScope.$broadcast('logout');
             $location.path('/splash');
         }
 
@@ -50,6 +57,7 @@ angular.module('IOUApp')
         };
 
         return {
+            login: login,
             logout: logout,
             setUserData: setUserData,
             removeUserData: removeUserData,

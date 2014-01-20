@@ -10,9 +10,7 @@ angular.module('IOUApp')
                     var accessToken = res.authResponse.accessToken;
                     Auth.login({pass: accessToken})
                         .success(function(userData) {
-                            User.setUserData(userData);
-                            $scope.$emit('login');
-                            $location.path('/');
+                            User.login(userData);
                         });
                 }
             }, {scope: 'email,user_likes'});
