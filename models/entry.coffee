@@ -136,7 +136,7 @@ getAll = (id, filters, next) ->
       sub.where('debtor_id', id)
         .orWhere('lender_id', id)
     .where('status', '!=', 3)
-    .limit(filters.limit or 10)
+    .limit(filters.limit or 8)
     .offset(filters.offset or 0)
     .orderBy('created_at', filters.order or 'desc')
 
