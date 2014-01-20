@@ -7,10 +7,10 @@ module.exports =
     getById(id, next)
   getUserEntryById: (userId, entryId, next) ->
     getUserEntryById(userId, entryId, next)
-  getAll: (id, filters, next) ->
-    getAll(id, filters, next)
-  getSummary: (userId, next) ->
-    getSummary(userId, next)
+  getAll: (userId, filters, next) ->
+    getAll(userId, filters, next)
+  getSummary: (userId, filters, next) ->
+    getSummary(userId, filters, next)
   getCount: (userId, filters, next) ->
     getCount(userId, filters, next)
   create: (fields, next) ->
@@ -164,16 +164,34 @@ getAll = (id, filters, next) ->
         next(false)
 
 
-getSummary = (userId, next) ->
+getSummary = (userId, filters, next) ->
 
-  db.postgres()
+  query = db.postgres()
     .from('entry')
     .select('entry.*')
     .where('entry.status', '=', '1')
     .where (sub) ->
       sub.where('debtor_id', userId)
         .orWhere('lender_id', userId)
-    .exec (error, reply) ->
+
+  if filters.from
+    query.where('created_at', '>',  moment(filters.from).toISOString())
+
+  if filters.to
+    query.where('created_at', '<', moment(filters.to).toISOString())
+
+  if filters.contractor
+    query.where (sub) ->
+      sub.where('debtor_id', filters.contractor)
+        .orWhere('lender_id', filters.contractor)
+
+  if filters.status
+    query.where('status', '=', filters.status)
+
+  if filters.name
+    query.where('name', 'ilike', '%'+filters.name+'%')
+
+  query.exec (error, reply) ->
       if not error
         summary = 0.0
         i = 0

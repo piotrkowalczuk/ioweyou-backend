@@ -23,29 +23,15 @@ module.exports = (app) ->
   #DELETE
   app.delete '/api/entry/:id', auth.tokenAuth, remove
 
-one = (req, res) ->
-  req.assert('id', 'Invalid entry ID').notEmpty().isInt()
 
-  if not req.validationErrors()
-    entryId = req.params.id
-    userId = req.query.uid
+validate = (req, res, success, error) ->
 
-    entryTable.getUserEntryById userId, entryId, (entry) ->
-      if entry
-        res.header "Content-Type", "application/json"
-        res.send(entry)
-      else
-        res.status(404).send()
-  else
-    res.status(404).send()
-
-
-list = (req, res) ->
+  filters = {}
 
   if req.query.limit
     req.assert('limit', {
-      max: 'Maximum value is 100.',
-      isInt: 'Integer expected.'
+    max: 'Maximum value is 100.',
+    isInt: 'Integer expected.'
     }).max(100).isInt()
 
   if req.query.offset
@@ -77,22 +63,51 @@ list = (req, res) ->
       order: req.query.order
       name: req.query.name
 
+    success(filters);
+
+  else
+    error(req.ValidationErrors())
+
+
+one = (req, res) ->
+  req.assert('id', 'Invalid entry ID').notEmpty().isInt()
+
+  if not req.validationErrors()
+    entryId = req.params.id
+    userId = req.query.uid
+
+    entryTable.getUserEntryById userId, entryId, (entry) ->
+      if entry
+        res.header "Content-Type", "application/json"
+        res.send(entry)
+      else
+        res.status(404).send()
+  else
+    res.status(404).send()
+
+
+list = (req, res) ->
+
+  validate req, res, (filters)->
     entryTable.getAll req.query.uid, filters, (entries) ->
       if entries
         res.header "Content-Type", "application/json"
         res.send(entries)
       else
         res.status(404).send()
-  else
-    res.status(404).send(req.validationErrors())
+  , (err) ->
+    res.status(404).send(err)
 
 summary = (req, res) ->
-  entryTable.getSummary req.query.uid, (summary) ->
-    if summary
-      res.header "Content-Type", "application/json"
-      res.send(summary)
-    else
-      res.status(404).send()
+  validate req, res, (filters)->
+    entryTable.getSummary req.query.uid, filters, (summary) ->
+      if summary
+        res.header "Content-Type", "application/json"
+        res.send(summary)
+      else
+        res.status(404).send()
+  , (err) ->
+    res.status(404).send(err)
 
 count = (req, res) ->
 
@@ -141,12 +156,6 @@ create = (req, res) ->
     contractors = req.body.contractors
     description = req.body.description
     value = req.body.value / (contractors.length + parseInt(req.body.includeMe))
-
-    console.log req.body.value
-    console.log contractors.length
-    console.log contractors.length + req.body.includeMe
-    console.log req.body.includeMe
-    console.log value
 
     userTable.friendshipsExists userId, contractors, (exists) ->
       if exists

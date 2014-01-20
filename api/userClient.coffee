@@ -29,6 +29,5 @@ addOrCreate = (req, res) ->
           res.status(statusCode).send {isCreated: isCreated}
 
   else
-    console.log req.validationErrors()
     res.send(400).send()
 
