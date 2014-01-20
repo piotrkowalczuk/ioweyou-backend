@@ -1,8 +1,8 @@
 angular.module('IOUApp')
 
-    .factory('UserFactory', function($http, AuthFactory) {
+    .factory('UserFactory', function($http, User) {
 
-        var credentials = AuthFactory.getUserCredentials;
+        var credentials = User.getUserCredentials;
 
         return {
             get : function(id) {

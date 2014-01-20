@@ -1,9 +1,11 @@
 angular.module('IOUApp')
 
-    .factory('AuthFactory', ['$http', '$cookieStore', function($http, $cookieStore) {
-        var login = function(credentials) {
-            return $http.post('/api/login', credentials);
-        };
+    .factory('User', function($rootScope, $location, $cookieStore) {
+        var logout = function() {
+            removeUserData();
+            $rootScope.$emit('logout');
+            $location.path('/splash');
+        }
 
         var getUserData = function() {
             return $cookieStore.get('userData');
@@ -12,6 +14,10 @@ angular.module('IOUApp')
         var setUserData = function (userData) {
             $cookieStore.put('userData', userData);
         }
+
+        var removeUserData = function () {
+            $cookieStore.remove('userData');
+        };
 
         var getUserProperty = function(property) {
             var userData = getUserData();
@@ -32,10 +38,6 @@ angular.module('IOUApp')
             return credentials;
         };
 
-        var removeUserData = function () {
-            $cookieStore.remove('userData');
-        };
-
         var isLogged = function() {
             var apiToken = getUserProperty('ioweyouToken');
             var uid = getUserProperty('ioweyouId');
@@ -43,11 +45,12 @@ angular.module('IOUApp')
             if(apiToken && uid) {
                 return true;
             }
+
             return false;
         };
 
         return {
-            login : login,
+            logout: logout,
             setUserData: setUserData,
             removeUserData: removeUserData,
             getUserData: getUserData,
@@ -57,4 +60,5 @@ angular.module('IOUApp')
         }
 
 
-    }]);
+    }
+);

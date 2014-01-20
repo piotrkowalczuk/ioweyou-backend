@@ -1,6 +1,6 @@
 angular.module('IOUApp')
 
-    .controller('DashboardController', function($scope, Entry, AuthFactory) {
+    .controller('DashboardController', function($scope, Entry, User) {
 
             $scope.fetchEntries = function(status) {
                 Entry.get({limit: 5, status: status})
@@ -9,15 +9,13 @@ angular.module('IOUApp')
                     });
             }
 
-            $scope.userData = AuthFactory.getUserData();
+            $scope.userData = User.getUserData();
 
             $scope.fetchEntries(0);
-
 
             $scope.getStatus = function(statusId) {
                 return Entry.getStatus(statusId);
             }
-
 
             $scope.fetchOpenEntries = function() {
                 $scope.fetchEntries(0);

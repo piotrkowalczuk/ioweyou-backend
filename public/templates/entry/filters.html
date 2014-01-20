@@ -27,6 +27,7 @@
                 id="entry-filter-contractor-input"
                 ng-change="fetchData()"
                 ng-model="filter.contractor">
+            <option value="" selected="selected">Wszyscy</option>
             <option
                     ng-repeat="contractor in contractors"
                     value="{{contractor.id}}">
@@ -42,6 +43,7 @@
                 id="entry-filter-status-input"
                 ng-change="fetchData()"
                 ng-model="filter.status">
+            <option value="" selected="selected">Każdy</option>
             <option
                     ng-repeat="status in statuses"
                     value="{{$index}}">

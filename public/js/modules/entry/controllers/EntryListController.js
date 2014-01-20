@@ -1,18 +1,14 @@
 angular.module('IOUApp')
 
     .controller('EntryListController',
-        function($scope, $http, Entry, EntryFilter, AuthFactory, UserFactory) {
+        function($scope, $http, Entry, EntryFilter, User, UserFactory) {
             $scope.page = 0;
-
             $scope.limit = 8;
-
             $scope.queryParams = {};
-
             $scope.filter = {};
-
             $scope.statuses = EntryFilter.getStatuses();
-
-            $scope.userData = AuthFactory.getUserData();
+            $scope.userData = User.getUserData();
+            $scope.summary = 0;
 
             UserFactory.getFriends()
                 .success(function(friends){
@@ -29,13 +25,19 @@ angular.module('IOUApp')
                 EntryFilter.addFilter($scope.queryParams, 'contractor', $scope.filter.contractor);
                 EntryFilter.addTimestampFilter($scope.queryParams, 'from', $scope.filter.from);
                 EntryFilter.addTimestampFilter($scope.queryParams, 'to', $scope.filter.to, 86399000);
-                console.log($scope.queryParams);
             }
 
             $scope.fetchNumberOfEntries = function() {
                 Entry.count($scope.queryParams)
                     .success(function(result) {
                         $scope.nbOfEntries = result.aggregate;
+                    });
+            }
+
+            $scope.fetchSummary = function() {
+                Entry.getSummary($scope.queryParams)
+                    .success(function(response){
+                        $scope.summary = response.summary;
                     });
             }
 
@@ -51,6 +53,7 @@ angular.module('IOUApp')
                 $scope.updateQueryParams();
                 $scope.fetchEntries();
                 $scope.fetchNumberOfEntries();
+                $scope.fetchSummary();
             }
 
             $scope.getStatus = function(statusId) {
@@ -79,6 +82,7 @@ angular.module('IOUApp')
 
             $scope.fetchEntries();
             $scope.fetchNumberOfEntries();
+            $scope.fetchSummary();
         }
     );
 

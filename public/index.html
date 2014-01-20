@@ -16,7 +16,7 @@
            <link rel="stylesheet" href="/public/vendors/bootstrap/css/bootstrap.min.css"/>
            <link rel="stylesheet" href="/public/css/main.css"/>
        </head>
-    <body>
+    <body ng-cloak>
         <header class="navbar navbar-inverse navbar-static-top" role="banner" ng-controller="AuthenticationController">
             <div class="container">
                 <nav class="navbar-inverse" role="navigation">
@@ -39,7 +39,7 @@
     </body>
     <script src="/public/js/app.js"></script>
     <script src="/public/js/modules/app/controllers/AppController.js"></script>
-    <script src="/public/js/modules/app/controllers/NavbarControllers.js"></script>
+    <script src="/public/js/modules/app/controllers/NavbarController.js"></script>
     <script src="/public/js/modules/app/services/HttpResponseInterceptor.js"></script>
     <script src="/public/js/directives/ng-src-error.js"></script>
     <script src="/public/js/modules/entry/services/Entry.js"></script>
@@ -47,10 +47,11 @@
     <script src="/public/js/modules/entry/controllers/EntryListController.js"></script>
     <script src="/public/js/modules/entry/controllers/EntryCreateController.js"></script>
     <script src="/public/js/modules/entry/controllers/EntryShowController.js"></script>
-    <script src="/public/js/modules/auth/controller.js"></script>
-    <script src="/public/js/modules/auth/services.js"></script>
-    <script src="/public/js/modules/splash/controller.js"></script>
-    <script src="/public/js/modules/user/services.js"></script>
+    <script src="/public/js/modules/auth/controllers/AuthenticationController.js"></script>
+    <script src="/public/js/modules/auth/services/Auth.js"></script>
+    <script src="/public/js/modules/splash/controllers/SplashController.js"></script>
+    <script src="/public/js/modules/user/services/User.js"></script>
+    <script src="/public/js/modules/user/services/UserFactory.js"></script>
     <script src="/public/js/modules/dashboard/controllers/DashboardController.js"></script>
     <script src="/public/js/modules/dashboard/controllers/RightController.js"></script>
     <script src="/public/js/modules/flash/controllers/FlashController.js"></script>

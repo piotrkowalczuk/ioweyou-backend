@@ -1,6 +1,6 @@
 angular.module('IOUApp')
 
-    .factory('EntryFilter', function($http, AuthFactory) {
+    .factory('EntryFilter', function($http, Auth) {
 
         var statuses = ['Otwarte', 'Zaakceptowane', 'Odrzucone'];
 

@@ -1,0 +1,13 @@
+<h3>Podsumowanie </h3>
+<div ng-show="summary == 0" class="statistics zero">
+    {{ summary }} PLN
+</div>
+
+<div ng-show="summary > 0" class="statistics income">
+    {{ summary }} PLN
+</div>
+
+<div ng-show="summary < 0" class="statistics outcome">
+    {{ summary }} PLN
+</div>
+

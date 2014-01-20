@@ -42,12 +42,12 @@ angular.module('IOUApp', ['ngRoute', 'ezfb', 'ngCookies', 'ngAnimate', 'ui.boots
 
         $httpProvider.interceptors.push('HttpResponseInterceptor');
     })
-    .run( function($rootScope, $location, AuthFactory ) {
+    .run( function($rootScope, $location, User ) {
         $rootScope.$on("$routeChangeStart", function (event, next, current) {
             if (next.publicAccess) {
                 return;
             } else {
-                if(!AuthFactory.isLogged()) {
+                if(!User.isLogged()) {
                     $location.path('/splash');
                 }
             }

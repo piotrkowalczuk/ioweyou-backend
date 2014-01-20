@@ -1,8 +1,8 @@
 angular.module('IOUApp')
 
     .controller('EntryShowController',
-    function($scope, $routeParams, $location, Entry, AuthFactory) {
-        $scope.userData = AuthFactory.getUserData();
+    function($scope, $routeParams, $location, Entry, User) {
+        $scope.userData = User.getUserData();
         $scope.entry = {};
         $scope.formData = {};
         $scope.formErrors = {};
@@ -121,6 +121,7 @@ angular.module('IOUApp')
                     fetchEntry();
                 });
         };
+
         $scope.getStatus = getStatus;
 
         $scope.deleteEntry = deleteEntry;

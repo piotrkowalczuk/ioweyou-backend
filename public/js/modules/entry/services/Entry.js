@@ -1,8 +1,8 @@
 angular.module('IOUApp')
 
-    .factory('Entry', function($http, AuthFactory) {
+    .factory('Entry', function($http, User) {
 
-        var credentials = AuthFactory.getUserCredentials;
+        var credentials = User.getUserCredentials;
 
         var status = ['Otwarte', 'Zaakceptowane', 'Odrzucone', 'Usunięte'];
 
@@ -53,9 +53,13 @@ angular.module('IOUApp')
                     params: credentials()
                 });
             },
-            getSummary : function() {
+            getSummary : function(params) {
+                params = params || {};
+                params.apiToken = credentials().apiToken;
+                params.uid = credentials().uid;
+
                 return $http.get('/api/entry/summary', {
-                    params: credentials()
+                    params: params
                 });
             },
             getStatus: function(statusId) {
