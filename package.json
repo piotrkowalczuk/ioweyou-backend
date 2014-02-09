@@ -22,10 +22,8 @@
     "chai": "*",
     "grunt": "~0.4.x",
     "grunt-cli": "*",
+    "grunt-mocha-test": "*",
     "q": "*",
     "lodash": "*"
-  },
-  "scripts": {
-    "test": "./node_modules/.bin/mocha --compilers coffee:coffee-script --recursive -R xunit test/ > test-reports.xml"
   }
 }

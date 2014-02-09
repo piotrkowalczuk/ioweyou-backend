@@ -1,13 +1,13 @@
 module.exports =
   app:
-    port: 8000
+    port: 8080
   database:
     client: 'pg',
     connection:
       host: '127.0.0.1',
       user: 'postgres',
-      password: 'postgres.123',
-      database: 'ioweyou',
+      password: '',
+      database: 'ioweyou_test',
       charset: 'utf8'
   redis:
     host: 'localhost',
@@ -27,7 +27,8 @@ module.exports =
       user: 'gmail.user@gmail.com',
       pass: 'userpass'
   apn:
-    env: 'dev',
+    env: 'test',
     expiration: '1d',
     reconnectDelay: '1s',
     cacheTTL: '30m'
+

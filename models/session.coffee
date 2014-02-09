@@ -9,8 +9,6 @@ module.exports =
     getUserData(uid, next)
   setUserData: (uid, userData) ->
     setUserData(uid, userData)
-  getUserApiToken: (uid, next) ->
-    getUserApiToken(uid, next)
   getUserId: (uid, next) ->
     getUserId(uid, next)
 

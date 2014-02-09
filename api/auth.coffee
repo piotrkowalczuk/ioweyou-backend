@@ -13,6 +13,7 @@ _ = require 'lodash'
 
 module.exports = (app) ->
   app.post '/login',
+    validateRequest,
     prepareLocals,
     fetchIfUserAcceptAppFromFacebook,
     fetchUserDataFromFacebook,
@@ -31,6 +32,14 @@ prepareLocals = (req, res, next) ->
   res.locals.newlyRegisteredUser = false
 
   next()
+
+validateRequest = (req, res, next) ->
+    req.assert('pass', 'Passcode required.').notEmpty()
+
+    if req.validationErrors()
+      res.status(400).send()
+    else
+      next()
 
 login = (req, res) ->
   if res.locals.existingUser

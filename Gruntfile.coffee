@@ -1,6 +1,17 @@
 migration = require './tasks/migration'
 
 module.exports = (grunt) ->
+
+  grunt.initConfig
+    mochaTest:
+      test:
+        options:
+          reporter: 'spec'
+          require: 'coffee-script'
+          mocha: require('mocha')
+        src: ['test/**/*_test.coffee']
+
+
   grunt.registerTask 'migration:init', 'Initialize migration system.', ()->
     done = this.async()
     migration.initialize (message) ->
@@ -18,3 +29,5 @@ module.exports = (grunt) ->
     migration.syncdb (message) ->
       grunt.log.writeln message
       done()
+
+  grunt.loadNpmTasks('grunt-mocha-test');

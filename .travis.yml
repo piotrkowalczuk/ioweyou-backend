@@ -1,0 +1,10 @@
+language: node_js
+node_js:
+  - "0.10.25"
+before_script:
+  - cp config.coffee.test config.coffee
+  - psql -c 'create database ioweyou_test;' -U postgres
+script:
+  - "grunt mochaTest"
+services:
+  - redis-server

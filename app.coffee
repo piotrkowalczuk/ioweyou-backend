@@ -17,7 +17,9 @@ app.use expressValidator({
 })
 
 mailer.extend app, config.mailer
-apn.extend app, config.apn
+
+if config.apn.env in ["prod", "dev"]
+  apn.extend app, config.apn
 
 require('./api/entry')(app)
 require('./api/auth')(app)
