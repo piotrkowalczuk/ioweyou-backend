@@ -12,7 +12,6 @@ app.set('views', __dirname + '/views')
 app.set('view engine', 'jade')
 
 app.use express.bodyParser()
-app.use '/public/', express.static(__dirname + '/public')
 app.use expressValidator({
   errorFormatter: validator.errorFormatter
 })
@@ -24,6 +23,3 @@ require('./api/entry')(app)
 require('./api/auth')(app)
 require('./api/user')(app)
 require('./api/userClient')(app)
-
-app.get '/', (req, res)->
-  res.sendfile './public/index.html'

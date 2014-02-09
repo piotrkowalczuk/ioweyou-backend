@@ -3,8 +3,8 @@ auth = require '../lib/auth'
 userTable = require '../models/user'
 
 module.exports = (app) ->
-  app.get '/api/user/friends', getFriends
-  app.get '/api/user/:id', getById
+  app.get '/user/friends', getFriends
+  app.get '/user/:id', getById
 
 getById = (req, res) ->
   userId = req.params.id

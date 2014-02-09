@@ -11,18 +11,18 @@ session = require '../models/session'
 
 module.exports = (app) ->
   #GET
-  app.get '/api/entry', auth.tokenAuth, list
-  app.get '/api/entry/summary', auth.tokenAuth, summary
-  app.get '/api/entry/count', auth.tokenAuth, count
-  app.get '/api/entry/:id', auth.tokenAuth, one
+  app.get '/entry', auth.tokenAuth, list
+  app.get '/entry/summary', auth.tokenAuth, summary
+  app.get '/entry/count', auth.tokenAuth, count
+  app.get '/entry/:id', auth.tokenAuth, one
   #PUT
-  app.put '/api/entry',auth.tokenAuth, create
+  app.put '/entry',auth.tokenAuth, create
   #POST
-  app.post '/api/entry/:id', auth.tokenAuth, modify
-  app.post '/api/entry/accept/:id', auth.tokenAuth, accept
-  app.post '/api/entry/reject/:id', auth.tokenAuth, reject
+  app.post '/entry/:id', auth.tokenAuth, modify
+  app.post '/entry/accept/:id', auth.tokenAuth, accept
+  app.post '/entry/reject/:id', auth.tokenAuth, reject
   #DELETE
-  app.delete '/api/entry/:id', auth.tokenAuth, remove
+  app.delete '/entry/:id', auth.tokenAuth, remove
 
 
 validate = (req, res, success, error) ->

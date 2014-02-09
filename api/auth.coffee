@@ -12,14 +12,25 @@ moment = require 'moment'
 _ = require 'lodash'
 
 module.exports = (app) ->
-  app.post '/api/login',
-    prepareLocale,
+  app.post '/login',
+    prepareLocals,
     fetchIfUserAcceptAppFromFacebook,
     fetchUserDataFromFacebook,
     checkIfUserExists,
     register,
     fetchFriendsFromFacebook,
     login
+
+prepareLocals = (req, res, next) ->
+  req.session = session
+  res.locals.facebookToken = req.body.pass
+  res.locals.isAppAccepted = false
+  res.locals.facebookUser = null
+  res.locals.existingUser = null
+  res.locals.userFriends = null
+  res.locals.newlyRegisteredUser = false
+
+  next()
 
 login = (req, res) ->
   if res.locals.existingUser
@@ -79,18 +90,6 @@ register = (req, res, next) ->
 
   else
     next()
-
-
-prepareLocale = (req, res, next) ->
-  req.session = session
-  res.locals.facebookToken = req.body.pass
-  res.locals.isAppAccepted = false
-  res.locals.facebookUser = null
-  res.locals.existingUser = null
-  res.locals.userFriends = null
-  res.locals.newlyRegisteredUser = false
-
-  next()
 
 fetchIfUserAcceptAppFromFacebook = (req, res, next) ->
   request.get facebook.getGraphAPI.AppRequest(res.locals.facebookToken), (error, response, appResponseBody) ->
