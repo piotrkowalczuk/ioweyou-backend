@@ -1,6 +1,8 @@
 db = require '../db'
 
 module.exports =
+  create: (fields, next) ->
+    create(fields, next)
   getById: (id, next) ->
     getById(id, next)
   getBy: (fieldName, value, next) ->
@@ -9,8 +11,14 @@ module.exports =
     getByFacebookId(value, next)
   getFriends: (userId, next) ->
     getFriends(userId, next)
-  friendshipsExists: (userId, friendsIds, next) ->
-    friendshipsExists(userId, friendsIds, next)
+  findAllByFacebookIds: (facebookIds, next) ->
+    findAllByFacebookIds(facebookIds, next)
+
+create = (fields, next) ->
+  db.postgres('user')
+    .insert(fields)
+    .returning('id')
+    .exec next
 
 getBy = (fieldName, value, next) ->
   db.postgres()
@@ -39,6 +47,20 @@ getById = (id, next) ->
 getByFacebookId = (value, next) ->
   getBy('sau.uid', value, next)
 
+findAllByFacebookIds = (facebookIds, next) ->
+  db.postgres()
+    .from('user')
+    .select(
+      'user.id',
+      'user.username',
+      'user.first_name',
+      'user.last_name',
+      'user.email',
+      'sau.uid'
+    )
+    .join('user_social as sau', 'sau.user_id', '=', 'user.id', 'left')
+    .whereIn('sau.uid', facebookIds)
+    .exec next
 
 getFriends = (id, next) ->
   subQuery = db.postgres.raw('
@@ -67,24 +89,5 @@ getFriends = (id, next) ->
     .exec (error, reply) ->
       if not error
         next(reply)
-      else
-        next(false)
-
-
-friendshipsExists = (userId, friendsIds, next) ->
-  db.postgres()
-    .from('user_friendship')
-    .select(
-      'id'
-    )
-    .where (sub) ->
-      sub.whereIn('creator_id', friendsIds)
-        .andWhere('friend_id', userId)
-    .orWhere (sub) ->
-      sub.whereIn('friend_id', friendsIds)
-        .andWhere('creator_id', userId)
-    .exec (error, reply) ->
-      if not error and reply.length > 0
-        next(true)
       else
         next(false)

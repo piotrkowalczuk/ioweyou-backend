@@ -3,69 +3,144 @@ request = require 'request'
 auth = require '../lib/auth'
 facebook = require '../lib/facebook'
 userTable = require '../models/user'
+userSocialTable = require '../models/userSocial'
+userFriendshipTable = require '../models/userFriendship'
 config = require '../config'
 db = require '../db'
 session = require '../models/session'
+moment = require 'moment'
+_ = require 'lodash'
 
 module.exports = (app) ->
-  app.post '/api/login', login
-  app.post '/api/register', register
-
+  app.post '/api/login',
+    prepareLocale,
+    fetchIfUserAcceptAppFromFacebook,
+    fetchUserDataFromFacebook,
+    checkIfUserExists,
+    register,
+    fetchFriendsFromFacebook,
+    login
 
 login = (req, res) ->
-  ###
-    check if token match App id.
-  ###
-  facebookToken = req.body.pass
-  req.session = session
+  if res.locals.existingUser
+    user = res.locals.existingUser
 
-  request.get facebook.getGraphAPI.AppRequest(facebookToken), (error, response, appResponseBody) ->
-    appResponseObject = JSON.parse(appResponseBody)
-    if not error and response.statusCode == 200
-      request.get facebook.getGraphAPI.MeRequest(facebookToken), (error, response, meResponseBody) ->
-        meResponseObject = JSON.parse(meResponseBody)
-        if not error and response.statusCode == 200
-          if appResponseObject.id isnt config.facebook.appId
-            res.status(403).send('Forbidden')
-          else
-            userTable.getByFacebookId meResponseObject.id, (user)->
+    loggedUser =
+      username: user.username
+      first_name: user.first_name
+      last_name: user.last_name
+      email: user.email
+      facebookId: res.locals.facebookUser.id
+      ioweyouToken: uuid.v4()
+      ioweyouId: user.id.toString()
+
+    req.session.setUserData loggedUser.ioweyouId, loggedUser
+    res.header "Content-Type", "application/json"
+    res.status 200
+    res.send loggedUser
+  else
+    res.status(500).send('Login error occured.')
+
+register = (req, res, next) ->
+  if not res.locals.existingUser
+    user = res.locals.facebookUser
+
+    newUser =
+      username: user.username
+      password: "!"
+      first_name: user.first_name
+      last_name: user.last_name
+      email: user.email
+      date_joined: moment().format('YYYY-MM-DD HH:mm:ss')
+      last_login: moment().format('YYYY-MM-DD HH:mm:ss')
+      is_superuser: false
+      is_staff: false
+      is_active: true
+
+    userTable.create newUser, (error, response) ->
+      if not error
+        newUserSocial =
+          user_id: response[0]
+          uid: res.locals.facebookUser.id
+          provider: "facebook"
+          extra_data: {}
+
+        userSocialTable.create newUserSocial, (error, newUserSocialId) ->
+          if not error
+            userTable.getByFacebookId res.locals.facebookUser.id, (user)->
               if user
+                res.locals.newlyRegisteredUser = true
+                res.locals.existingUser = user
+                next()
+          else
+            res.status(500).send(error)
+      else
+        res.status(500).send(error)
 
-                userData =
-                  username: user.username
-                  first_name: user.first_name
-                  last_name: user.last_name
-                  email: user.email
-                  facebookId: meResponseObject.id
-                  ioweyouToken: uuid.v4()
-                  ioweyouId: user.id.toString()
+  else
+    next()
 
-                req.session.setUserData userData.ioweyouId, userData
-                res.header "Content-Type", "application/json"
-                res.status 200
-                res.send userData
-              else
-                res.send false
 
-        else
-          res.status(response.statusCode).send meResponseBody
+prepareLocale = (req, res, next) ->
+  req.session = session
+  res.locals.facebookToken = req.body.pass
+  res.locals.isAppAccepted = false
+  res.locals.facebookUser = null
+  res.locals.existingUser = null
+  res.locals.userFriends = null
+  res.locals.newlyRegisteredUser = false
+
+  next()
+
+fetchIfUserAcceptAppFromFacebook = (req, res, next) ->
+  request.get facebook.getGraphAPI.AppRequest(res.locals.facebookToken), (error, response, appResponseBody) ->
+    if not error && response.statusCode == 200
+      appResponseObject = JSON.parse(appResponseBody)
+
+      if appResponseObject.id is config.facebook.appId
+        next()
+      else
+        res.status(403).send('Forbidden')
     else
-      res.status(response.statusCode).send appResponseBody
+      res.status(500).send('Facebook Server Error')
+
+fetchUserDataFromFacebook = (req, res, next) ->
+  request.get facebook.getGraphAPI.MeRequest(res.locals.facebookToken), (error, response, meResponseBody) ->
+    if not error && response.statusCode == 200
+      res.locals.facebookUser = JSON.parse(meResponseBody)
+      next()
+    else
+      res.status(500).send('Facebook Server Error')
+
+checkIfUserExists = (req, res, next) ->
+  userTable.getByFacebookId res.locals.facebookUser.id, (user)->
+    if user
+      res.locals.existingUser = user
+
+    next()
 
 
-register = (req, res) ->
+fetchFriendsFromFacebook = (req, res, next) ->
+  if res.locals.newlyRegisteredUser
+    request.get facebook.getGraphAPI.FriendsRequest(res.locals.facebookToken, res.locals.facebookUser.id), (error, response, friendsResponseBody) ->
+      if not error && response.statusCode == 200
+        fetchedFriends = JSON.parse(friendsResponseBody)
 
-  facebookToken = req.body.token
+        installedFriends = _.filter fetchedFriends.data, (friend) ->
+          return friend.installed is true
 
-  userTable.getByFacebookId facebookToken, (user)->
+        friendsIds = _.map installedFriends, (friend) ->
+          return friend.id
 
-    if not user
-      request.get facebook.getGraphAPI.AppRequest(facebookToken), (error, response, appResponseBody) ->
-        appResponseObject = JSON.parse(appResponseBody)
-        if not error && response.statusCode == 200
-          request.get facebook.getGraphAPI.MeRequest(facebookToken), (error, response, meResponseBody) ->
-            meResponseObject = JSON.parse(meResponseBody)
-            if not error && response.statusCode == 200
-              if not (appResponseObject.id is config.facebook.appId)
-                res.status(403).send('Forbidden')
-              else
+        userTable.findAllByFacebookIds friendsIds, (error, users) ->
+
+          _.forEach users, (user) ->
+            userFriendshipTable.createIfNotExists res.locals.existingUser.id, user.id, (error, reply) ->
+              if error
+                console.log error
+
+        next()
+      else
+        res.status(500).send('Facebook Server Error')
+  else
+    next()

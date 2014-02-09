@@ -3,6 +3,7 @@ config = require '../config'
 auth = require '../lib/auth'
 entryTable = require '../models/entry'
 userTable = require '../models/user'
+userFriendshipTable = require '../models/userFriendship'
 userManager = require '../managers/user'
 clientTable = require '../models/userClient'
 session = require '../models/session'
@@ -157,7 +158,7 @@ create = (req, res) ->
     description = req.body.description
     value = req.body.value / (contractors.length + parseInt(req.body.includeMe))
 
-    userTable.friendshipsExists userId, contractors, (exists) ->
+    userFriendshipTable.friendshipsExists userId, contractors, (exists) ->
       if exists
         for contractor in contractors
           userTable.getById contractor, (dbContractor) =>
