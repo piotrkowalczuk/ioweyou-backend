@@ -20,4 +20,4 @@ tokenAuth = (req, res, next) ->
       else
         res.status(403).send 'Forbidden'
   else
-    res.status(400).send 'Bad Request'
+    res.status(401).send 'Unauthorized'

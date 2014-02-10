@@ -202,9 +202,9 @@ getSummary = (userId, filters, next) ->
             summary = parseFloat(summary) + parseFloat(row.value)
           i = i + 1
 
-        next(JSON.stringify({"summary": summary.toFixed(2)}))
+        next(error, JSON.stringify({"summary": summary.toFixed(2)}))
       else
-        next(false)
+        next(error, null)
 
 
 accept = (userId, entryId, next) ->

@@ -82,9 +82,9 @@ one = (req, res) ->
         res.header "Content-Type", "application/json"
         res.send(entry)
       else
-        res.status(404).send()
+        res.status(404).send("Not Found.")
   else
-    res.status(404).send()
+    res.status(400).send()
 
 
 list = (req, res) ->
@@ -97,18 +97,18 @@ list = (req, res) ->
       else
         res.status(404).send()
   , (err) ->
-    res.status(404).send(err)
+    res.status(400).send(err)
 
 summary = (req, res) ->
   validate req, res, (filters)->
-    entryTable.getSummary req.query.uid, filters, (summary) ->
-      if summary
+    entryTable.getSummary req.query.uid, filters, (error, summary) ->
+      if not error
         res.header "Content-Type", "application/json"
         res.send(summary)
       else
-        res.status(404).send()
+        res.status(404).send("Not Found.")
   , (err) ->
-    res.status(404).send(err)
+    res.status(400).send(err)
 
 count = (req, res) ->
 
@@ -140,9 +140,9 @@ count = (req, res) ->
         res.header "Content-Type", "application/json"
         res.send(count)
       else
-        res.status(404).send()
+        res.status(404).send("Not Found.")
   else
-    res.status(404).send(req.validationErrors())
+    res.status(400).send(req.validationErrors())
 
 create = (req, res) ->
   req.checkBody('name', 'Nazwa nie może być pusta.').notEmpty()
@@ -198,13 +198,13 @@ create = (req, res) ->
                     }, (error) ->
 
             else
-              res.status(404).send()
+              res.status(404).send("Not Found.")
 
           res.status(200).send {isCreated: true}
       else
-        res.status(404).send()
+        res.status(404).send("Not Found.")
   else
-    res.status(404).send(req.validationErrors(true))
+    res.status(400).send(req.validationErrors(true))
 
 
 accept = (req, res) ->
@@ -237,7 +237,7 @@ accept = (req, res) ->
 
       res.status(statusCode).send {isModified: isModified}
   else
-    res.status(404).send()
+    res.status(400).send()
 
 
 reject = (req, res) ->
@@ -284,7 +284,7 @@ remove = (req, res) ->
     entryTable.remove userId, entryId, (statusCode, isModified) ->
       res.status(statusCode).send {isModified: isModified}
   else
-    res.status(404).send()
+    res.status(400).send()
 
 
 modify = (req, res) ->
