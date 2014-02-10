@@ -26,8 +26,10 @@ module.exports = (grunt) ->
 
   grunt.registerTask 'migration:syncdb', 'Synchronizes the database schema', () ->
     done = this.async()
-    migration.syncdb (message) ->
-      grunt.log.writeln message
+    migration.syncdb (error) ->
+      if error
+        grunt.fail.warn error
+
       done()
 
   grunt.loadNpmTasks('grunt-mocha-test');

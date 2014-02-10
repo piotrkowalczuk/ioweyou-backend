@@ -20,9 +20,8 @@ initialize = (next) ->
 
 syncdb = (next) ->
   schema = require "../database/schema"
-  schema.exec().then ()->
-    next('Sync completed.')
-
+  schema.exec (error, result) ->
+    next(error)
 
 migrate = (next) ->
   migrations = []

@@ -24,6 +24,8 @@
     "grunt-cli": "*",
     "grunt-mocha-test": "*",
     "q": "*",
-    "lodash": "*"
+    "lodash": "*",
+    "async": "0.2.5"
+
   }
 }
