@@ -2,7 +2,7 @@ app = require('../app.coffee').app
 should = require('chai').should()
 http = require 'http'
 config = require '../config'
-helpers = require './helpers'
+serverHelper = require './helpers/server'
 
 
 server = null
@@ -10,7 +10,7 @@ server = null
 describe 'app', ->
 
   before (done)->
-    server = helpers.createServer(done)
+    server = serverHelper.createServer(done)
 
   after (done)->
     server.close()
@@ -21,14 +21,7 @@ describe 'app', ->
     done()
 
   it "should return code 404", (done)->
-    headers =
-      host: "127.0.0.1",
-      port: config.app.port,
-      path: '/',
-      method: "POST",
-      headers: {}
-
-    http.get headers, (res)->
+    http.get serverHelper.getHeaders("POST", "/"), (res)->
       res.on 'data', (chunk)->
         res.statusCode.should.eql(404)
       res.on 'end', ()->

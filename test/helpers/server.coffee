@@ -1,5 +1,5 @@
-app = require('../app.coffee').app
-config = require '../config'
+app = require('../../app.coffee').app
+config = require '../../config'
 
 module.exports =
   createServer: (done) ->

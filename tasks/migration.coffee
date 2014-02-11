@@ -9,6 +9,8 @@ module.exports =
     initialize(next)
   syncdb: (next) ->
     syncdb(next)
+  cleardb: (next) ->
+    cleardb(next)
   migrate: (next) ->
     migrate(next)
 
@@ -22,6 +24,12 @@ syncdb = (next) ->
   schema = require "../database/schema"
   schema.exec (error, result) ->
     next(error)
+
+cleardb = (next) ->
+  clear = require "../database/clear"
+  clear.exec (error, result) ->
+    next(error)
+
 
 migrate = (next) ->
   migrations = []

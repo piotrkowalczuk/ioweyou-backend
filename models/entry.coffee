@@ -129,22 +129,22 @@ getCount = (userId, filters, next) ->
       else
         next(false)
 
-getAll = (id, filters, next) ->
+getAll = (userId, filters, next) ->
 
   query = getEntryQuery()
     .where (sub) ->
-      sub.where('debtor_id', id)
-        .orWhere('lender_id', id)
+      sub.where('debtor_id', userId)
+        .orWhere('lender_id', userId)
     .where('status', '!=', 3)
     .limit(filters.limit or 8)
     .offset(filters.offset or 0)
     .orderBy('created_at', filters.order or 'desc')
 
   if filters.from
-    query.where('created_at', '>',  moment(filters.from).toISOString())
+    query.where('entry.created_at', '>',  moment(filters.from).toISOString())
 
   if filters.to
-    query.where('created_at', '<', moment(filters.to).toISOString())
+    query.where('entry.created_at', '<', moment(filters.to).toISOString())
 
   if filters.contractor
     query.where (sub) ->
@@ -158,10 +158,11 @@ getAll = (id, filters, next) ->
     query.where('name', 'ilike', '%'+filters.name+'%')
 
   query.exec (error, reply) ->
-      if not error
-        next(reply)
-      else
-        next(false)
+    if not error
+      next(reply)
+    else
+      next(false)
+
 
 
 getSummary = (userId, filters, next) ->
