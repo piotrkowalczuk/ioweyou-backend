@@ -32,4 +32,13 @@ module.exports = (grunt) ->
 
       done()
 
+  grunt.registerTask 'migration:cleardb', 'Drop all tables from database', () ->
+    done = this.async()
+    migration.cleardb (error) ->
+      if error
+        grunt.fail.warn error
+
+      done()
+
+
   grunt.loadNpmTasks('grunt-mocha-test');

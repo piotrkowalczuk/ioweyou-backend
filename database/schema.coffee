@@ -21,9 +21,9 @@ exec = (next) ->
 
     async.series operations, (error, result) ->
       if error
-        grunt.log.errorlns "#{result.length - 1} tables created successfuly"
+        grunt.verbose.errorlns "#{result.length - 1} tables created successfuly"
       else
-        grunt.log.oklns "#{result.length} tables created successfuly"
+        grunt.verbose.oklns "#{result.length} tables created successfuly"
 
       next(error, result)
 
@@ -34,10 +34,10 @@ createMigrationTable = (next) ->
     table.integer('version')
     table.timestamps()
   .then () ->
-    grunt.log.oklns 'Migration table created successfully.'
+    grunt.verbose.oklns 'Migration table created successfully.'
     next(null, true)
   , (error) ->
-    grunt.log.errorlns 'Migration table was not created, error occurred.'
+    grunt.verbose.errorlns 'Migration table was not created, error occurred.'
     next(error)
 
 
@@ -52,10 +52,10 @@ createUserTable = (next) ->
     table.boolean('is_active').defaultTo(true)
     table.timestamps()
   .then () ->
-    grunt.log.oklns 'User table created successfully.'
+    grunt.verbose.oklns 'User table created successfully.'
     next(null, true)
   , (error) ->
-    grunt.log.errorlns 'User table was not created, error occurred.'
+    grunt.verbose.errorlns 'User table was not created, error occurred.'
     next(error)
 
 
@@ -72,10 +72,10 @@ createUserClientTable = (next) ->
       .onDelete("CASCADE")
     table.timestamps()
   .then ()->
-    grunt.log.oklns 'UserClient table created successfully.'
+    grunt.verbose.oklns 'UserClient table created successfully.'
     next(null, true)
   , (error) ->
-    grunt.log.errorlns 'UserClient table was not created, error occurred.'
+    grunt.verbose.errorlns 'UserClient table was not created, error occurred.'
     next(error)
 
 
@@ -96,10 +96,10 @@ createUserFriendshipTable = (next) ->
       .onDelete("CASCADE")
     table.timestamp('created_at')
   .then ()->
-    grunt.log.oklns 'UserFriendship table created successfully.'
+    grunt.verbose.oklns 'UserFriendship table created successfully.'
     next(null, true)
   , (error) ->
-    grunt.log.errorlns 'UserFriendship table was not created, error occurred.'
+    grunt.verbose.errorlns 'UserFriendship table was not created, error occurred.'
     next(error)
 
 
@@ -116,10 +116,10 @@ createUserSocialTable = (next) ->
     table.string('uid', 255).notNullable()
     table.text('extra_data').notNullable()
   .then ()->
-    grunt.log.oklns 'UserSocial table created successfully.'
+    grunt.verbose.oklns 'UserSocial table created successfully.'
     next(null, true)
   , (error) ->
-    grunt.log.errorlns 'UserSocial table was not created, error occurred.'
+    grunt.verbose.errorlns 'UserSocial table was not created, error occurred.'
     next(error)
 
 
@@ -147,10 +147,10 @@ createEntryTable = (next) ->
     table.timestamp('deleted_at')
     table.timestamps()
   .then ()->
-    grunt.log.oklns 'Entry table created successfully'
+    grunt.verbose.oklns 'Entry table created successfully'
     next(null, true)
   , (error) ->
-    grunt.log.errorlns 'Entry table was not created, error occurred.'
+    grunt.verbose.errorlns 'Entry table was not created, error occurred.'
     next(error)
 
 
@@ -172,10 +172,10 @@ createEntryCommentTable = (next) ->
       .onDelete("CASCADE")
     table.timestamps()
   .then ()->
-    grunt.log.oklns 'EntryComment table created successfully'
+    grunt.verbose.oklns 'EntryComment table created successfully'
     next(null, true)
   , (error) ->
-    grunt.log.errorlns 'EntryComment table was not created, error occurred.'
+    grunt.verbose.errorlns 'EntryComment table was not created, error occurred.'
     next(error)
 
 
@@ -186,10 +186,10 @@ createAnnouncementTable = (next) ->
     table.text('content').notNullable()
     table.timestamps()
   .then ()->
-    grunt.log.oklns 'Announcement table created successfully'
+    grunt.verbose.oklns 'Announcement table created successfully'
     next(null, true)
   , (error) ->
-    grunt.log.errorlns 'Announcement table was not created, error occurred.'
+    grunt.verbose.errorlns 'Announcement table was not created, error occurred.'
     next(error)
 
 createAnnouncementConfirmationTable = (next) ->
@@ -203,9 +203,9 @@ createAnnouncementConfirmationTable = (next) ->
       .onDelete("CASCADE")
     table.timestamp('created_at')
   .then ()->
-    grunt.log.oklns 'AnnouncementConfirmation table created successfully'
+    grunt.verbose.oklns 'AnnouncementConfirmation table created successfully'
     next(null, true)
   , (error) ->
-    grunt.log.errorlns 'AnnouncementConfirmation table was not created, error occurred.'
+    grunt.verbose.errorlns 'AnnouncementConfirmation table was not created, error occurred.'
     next(error)
 
