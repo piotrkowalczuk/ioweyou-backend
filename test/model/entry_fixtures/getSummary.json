@@ -1,0 +1,278 @@
+[
+    {
+        "table": "user",
+        "data": {
+            "id": 1,
+            "password": "!",
+            "username": "user#1",
+            "first_name": "user1",
+            "last_name": "user1",
+            "email": "user1@gmail.com",
+            "is_active": true
+        }
+    },
+    {
+        "table": "user",
+        "data": {
+            "id": 2,
+            "password": "!",
+            "username": "user#2",
+            "first_name": "user2",
+            "last_name": "user2",
+            "email": "user2@gmail.com",
+            "is_active": true
+        }
+    },
+    {
+        "table": "user",
+        "data": {
+            "id": 3,
+            "password": "!",
+            "username": "user#3",
+            "first_name": "user3",
+            "last_name": "user3",
+            "email": "user3@gmail.com",
+            "is_active": true
+        }
+    },
+    {
+        "table": "entry",
+        "data": {
+            "id": 1,
+            "name": "entry#1",
+            "description": "-",
+            "value": 11,
+            "status": 1,
+            "lender_id": 1,
+            "debtor_id": 2,
+            "accepted_at": "1999-01-01 10:10:10",
+            "rejected_at": "1999-01-01 10:10:10",
+            "created_at": "2001-01-01 00:00:00",
+            "updated_at": "1999-01-01 10:10:10"
+        }
+    },
+    {
+        "table": "entry",
+        "data": {
+            "id": 2,
+            "name": "entry#2",
+            "description": "-",
+            "value": 12,
+            "status": 1,
+            "lender_id": 1,
+            "debtor_id": 2,
+            "accepted_at": "1999-01-01 10:10:10",
+            "rejected_at": "1999-01-01 10:10:10",
+            "created_at": "2001-01-01 00:00:00",
+            "updated_at": "1999-01-01 10:10:10"
+        }
+    },
+    {
+        "table": "entry",
+        "data": {
+            "id": 3,
+            "name": "entry#3",
+            "description": "-",
+            "value": 13,
+            "status": 1,
+            "lender_id": 1,
+            "debtor_id": 2,
+            "accepted_at": "1999-01-01 10:10:10",
+            "rejected_at": "1999-01-01 10:10:10",
+            "created_at": "1998-01-01 00:00:00",
+            "updated_at": "1999-01-01 10:10:10"
+        }
+    },
+    {
+        "table": "entry",
+        "data": {
+            "id": 4,
+            "name": "entry#4",
+            "description": "-",
+            "value": 14,
+            "status": 1,
+            "lender_id": 1,
+            "debtor_id": 3,
+            "accepted_at": "1999-01-01 10:10:10",
+            "rejected_at": "1999-01-01 10:10:10",
+            "created_at": "1999-01-01 10:10:10",
+            "updated_at": "1999-01-01 10:10:10"
+        }
+    },
+    {
+        "table": "entry",
+        "data": {
+            "id": 5,
+            "name": "entry#5",
+            "description": "-",
+            "value": 15,
+            "status": 3,
+            "lender_id": 2,
+            "debtor_id": 1,
+            "accepted_at": "1999-01-01 10:10:10",
+            "rejected_at": "1999-01-01 10:10:10",
+            "created_at": "1999-01-01 10:10:10",
+            "updated_at": "1999-01-01 10:10:10"
+        }
+    },
+    {
+        "table": "entry",
+        "data": {
+            "id": 6,
+            "name": "entry#6",
+            "description": "-",
+            "value": 16,
+            "status": 1,
+            "lender_id": 2,
+            "debtor_id": 1,
+            "accepted_at": "1999-01-01 10:10:10",
+            "rejected_at": "1999-01-01 10:10:10",
+            "created_at": "1999-01-01 10:10:10",
+            "updated_at": "1999-01-01 10:10:10"
+        }
+    },
+    {
+        "table": "entry",
+        "data": {
+            "id": 7,
+            "name": "entry#7",
+            "description": "-",
+            "value": 17,
+            "status": 1,
+            "lender_id": 2,
+            "debtor_id": 1,
+            "accepted_at": "1999-01-01 10:10:10",
+            "rejected_at": "1999-01-01 10:10:10",
+            "created_at": "1999-01-01 10:10:10",
+            "updated_at": "1999-01-01 10:10:10"
+        }
+    },
+    {
+        "table": "entry",
+        "data": {
+            "id": 8,
+            "name": "entry#8",
+            "description": "-",
+            "value": 18,
+            "status": 1,
+            "lender_id": 2,
+            "debtor_id": 1,
+            "accepted_at": "1999-01-01 10:10:10",
+            "rejected_at": "1999-01-01 10:10:10",
+            "created_at": "1999-01-01 10:10:10",
+            "updated_at": "1999-01-01 10:10:10"
+        }
+    },
+    {
+        "table": "entry",
+        "data": {
+            "id": 9,
+            "name": "entry#9",
+            "description": "-",
+            "value": 19,
+            "status": 3,
+            "lender_id": 2,
+            "debtor_id": 1,
+            "accepted_at": "1999-01-01 10:10:10",
+            "rejected_at": "1999-01-01 10:10:10",
+            "created_at": "1999-01-01 10:10:10",
+            "updated_at": "1999-01-01 10:10:10"
+        }
+    },
+    {
+        "table": "entry",
+        "data": {
+            "id": 10,
+            "name": "entry#10",
+            "description": "-",
+            "value": 20,
+            "status": 2,
+            "lender_id": 2,
+            "debtor_id": 1,
+            "accepted_at": "1999-01-01 10:10:10",
+            "rejected_at": "1999-01-01 10:10:10",
+            "created_at": "1999-01-01 10:10:10",
+            "updated_at": "1999-01-01 10:10:10"
+        }
+    },
+    {
+        "table": "entry",
+        "data": {
+            "id": 11,
+            "name": "entry#11",
+            "description": "-",
+            "value": 21,
+            "status": 1,
+            "lender_id": 2,
+            "debtor_id": 3,
+            "accepted_at": "1999-01-01 10:10:10",
+            "rejected_at": "1999-01-01 10:10:10",
+            "created_at": "1999-01-01 10:10:10",
+            "updated_at": "1999-01-01 10:10:10"
+        }
+    },
+    {
+        "table": "entry",
+        "data": {
+            "id": 12,
+            "name": "entry#12",
+            "description": "-",
+            "value": 22,
+            "status": 1,
+            "lender_id": 2,
+            "debtor_id": 3,
+            "accepted_at": "1999-01-01 10:10:10",
+            "rejected_at": "1999-01-01 10:10:10",
+            "created_at": "1999-01-01 10:10:10",
+            "updated_at": "1999-01-01 10:10:10"
+        }
+    },
+    {
+        "table": "entry",
+        "data": {
+            "id": 13,
+            "name": "entry#13",
+            "description": "-",
+            "value": 23,
+            "status": 1,
+            "lender_id": 2,
+            "debtor_id": 3,
+            "accepted_at": "1999-01-01 10:10:10",
+            "rejected_at": "1999-01-01 10:10:10",
+            "created_at": "1999-01-01 10:10:10",
+            "updated_at": "1999-01-01 10:10:10"
+        }
+    },
+    {
+        "table": "entry",
+        "data": {
+            "id": 14,
+            "name": "entry#14",
+            "description": "-",
+            "value": 24,
+            "status": 1,
+            "lender_id": 2,
+            "debtor_id": 3,
+            "accepted_at": "1999-01-01 10:10:10",
+            "rejected_at": "1999-01-01 10:10:10",
+            "created_at": "1999-01-01 10:10:10",
+            "updated_at": "1999-01-01 10:10:10"
+        }
+    },
+    {
+        "table": "entry",
+        "data": {
+            "id": 15,
+            "name": "entry#15",
+            "description": "-",
+            "value": 25,
+            "status": 3,
+            "lender_id": 2,
+            "debtor_id": 3,
+            "accepted_at": "1999-01-01 10:10:10",
+            "rejected_at": "1999-01-01 10:10:10",
+            "created_at": "1999-01-01 10:10:10",
+            "updated_at": "1999-01-01 10:10:10"
+        }
+    }
+]

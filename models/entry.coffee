@@ -193,19 +193,19 @@ getSummary = (userId, filters, next) ->
     query.where('name', 'ilike', '%'+filters.name+'%')
 
   query.exec (error, reply) ->
-      if not error
-        summary = 0.0
-        i = 0
-        for row in reply
-          if row.debtor_id.toString() is userId
-            summary = parseFloat(summary) - parseFloat(row.value)
-          if row.lender_id.toString() is userId
-            summary = parseFloat(summary) + parseFloat(row.value)
-          i = i + 1
+    if not error
+      summary = 0.0
+      i = 0
+      for row in reply
+        if row.debtor_id is userId
+          summary = parseFloat(summary) - parseFloat(row.value)
+        if row.lender_id is userId
+          summary = parseFloat(summary) + parseFloat(row.value)
+        i = i + 1
 
-        next(error, JSON.stringify({"summary": summary.toFixed(2)}))
-      else
-        next(error, null)
+      next error, summary.toFixed(2)
+    else
+      next error, null
 
 
 accept = (userId, entryId, next) ->

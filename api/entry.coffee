@@ -88,7 +88,6 @@ one = (req, res) ->
 
 
 list = (req, res) ->
-
   validate req, res, (filters)->
     entryTable.getAll req.query.uid, filters, (entries) ->
       if entries
@@ -104,7 +103,7 @@ summary = (req, res) ->
     entryTable.getSummary req.query.uid, filters, (error, summary) ->
       if not error
         res.header "Content-Type", "application/json"
-        res.send(summary)
+        res.send JSON.stringify({summary: summary.toFixed(2)})
       else
         res.status(404).send("Not Found.")
   , (err) ->
