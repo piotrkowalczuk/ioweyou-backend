@@ -11,9 +11,9 @@ session = require '../models/session'
 
 module.exports = (app) ->
   #GET
-  app.get '/entry', auth.tokenAuth, list
-  app.get '/entry/summary', auth.tokenAuth, summary
-  app.get '/entry/count', auth.tokenAuth, count
+  app.get '/entry', auth.tokenAuth, filters, list
+  app.get '/entry/summary', auth.tokenAuth, filters, summary
+  app.get '/entry/count', auth.tokenAuth, filters, count
   app.get '/entry/:id', auth.tokenAuth, one
   #PUT
   app.put '/entry',auth.tokenAuth, create
@@ -25,9 +25,9 @@ module.exports = (app) ->
   app.delete '/entry/:id', auth.tokenAuth, remove
 
 
-validate = (req, res, success, error) ->
+filters = (req, res, next) ->
 
-  filters = {}
+  res.locals.filters = {}
 
   if req.query.limit
     req.assert('limit', {
@@ -53,8 +53,10 @@ validate = (req, res, success, error) ->
   if req.query.order
     req.assert('order', 'Invalid order format. Expected asc or desc.').isIn(['asc', 'desc'])
 
-  if not req.validationErrors()
-    filters =
+  if req.validationErrors()
+    res.status(404).send(req.validationErrors())
+  else
+    res.locals.filters =
       limit: req.query.limit
       offset: req.query.offset
       from: Number(req.query.from)
@@ -64,11 +66,7 @@ validate = (req, res, success, error) ->
       order: req.query.order
       name: req.query.name
 
-    success(filters);
-
-  else
-    error(req.ValidationErrors())
-
+    next()
 
 one = (req, res) ->
   req.assert('id', 'Invalid entry ID').notEmpty().isInt()
@@ -86,62 +84,30 @@ one = (req, res) ->
   else
     res.status(400).send()
 
-
 list = (req, res) ->
-  validate req, res, (filters)->
-    entryTable.getAll req.query.uid, filters, (entries) ->
-      if entries
-        res.header "Content-Type", "application/json"
-        res.send(entries)
-      else
-        res.status(404).send()
-  , (err) ->
-    res.status(400).send(err)
+  entryTable.getAll req.query.uid, res.locals.filters, (entries) ->
+    if entries
+      res.header "Content-Type", "application/json"
+      res.send(entries)
+    else
+      res.status(404).send()
 
 summary = (req, res) ->
-  validate req, res, (filters)->
-    entryTable.getSummary req.query.uid, filters, (error, summary) ->
-      if not error
-        res.header "Content-Type", "application/json"
-        res.send JSON.stringify({summary: summary.toFixed(2)})
-      else
-        res.status(404).send("Not Found.")
-  , (err) ->
-    res.status(400).send(err)
+  console.log(res.locals.filters);
+  entryTable.getSummary req.query.uid, res.locals.filters, (error, summary) ->
+    if not error
+      res.header "Content-Type", "application/json"
+      res.send JSON.stringify({summary: summary})
+    else
+      res.status(404).send("Not Found.")
 
 count = (req, res) ->
-
-  if req.query.from
-    req.assert('from', 'Invalid from date format. Expected POSIX time').isInt()
-
-  if req.query.to
-    req.assert('to', 'Invalid from date format. Expected POSIX time').isInt()
-
-  if req.query.contractor
-    req.assert('contractor', 'Invalid contractor format. Expected integer.').isInt()
-
-  if req.query.status
-    req.assert('status', 'Invalid status format. Expected integer.').isInt()
-
-  if not req.validationErrors()
-    filters =
-      limit: req.query.limit
-      offset: req.query.offset
-      from: Number(req.query.from)
-      to: Number(req.query.to)
-      contractor: req.query.contractor
-      status: req.query.status
-      order: req.query.order
-      name: req.query.name
-
-    entryTable.getCount req.query.uid, filters, (count) ->
-      if count
-        res.header "Content-Type", "application/json"
-        res.send(count)
-      else
-        res.status(404).send("Not Found.")
-  else
-    res.status(400).send(req.validationErrors())
+  entryTable.getCount req.query.uid, res.locals.filters, (count) ->
+    if count
+      res.header "Content-Type", "application/json"
+      res.send(count)
+    else
+      res.status(404).send("Not Found.")
 
 create = (req, res) ->
   req.checkBody('name', 'Nazwa nie może być pusta.').notEmpty()
