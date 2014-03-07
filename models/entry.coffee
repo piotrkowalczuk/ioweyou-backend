@@ -26,6 +26,7 @@ module.exports =
 
 
 getEntryQuery = ()->
+
   db.postgres()
     .from('entry')
     .select(
@@ -102,6 +103,7 @@ getCount = (userId, filters, next) ->
   query = db.postgres()
     .from('entry')
     .count('id')
+    .where('status', '!=', 3)
     .where (sub) ->
       sub.where('debtor_id', userId)
         .orWhere('lender_id', userId)
@@ -169,7 +171,7 @@ getSummary = (userId, filters, next) ->
 
   query = db.postgres()
     .from('entry')
-    .select('entry.*')
+    .select('entry.value', 'entry.lender_id', 'entry.debtor_id')
     .where('entry.status', '=', '1')
     .where (sub) ->
       sub.where('debtor_id', userId)
@@ -197,9 +199,9 @@ getSummary = (userId, filters, next) ->
       summary = 0.0
       i = 0
       for row in reply
-        if row.debtor_id is userId
+        if row.debtor_id is Number(userId)
           summary = parseFloat(summary) - parseFloat(row.value)
-        if row.lender_id is userId
+        if row.lender_id is Number(userId)
           summary = parseFloat(summary) + parseFloat(row.value)
         i = i + 1
 
