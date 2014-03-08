@@ -8,3 +8,5 @@ script:
   - "grunt mochaTest"
 services:
   - redis-server
+notifications:
+  webhooks: https://kodiksy.slack.com/services/hooks/travis?token=VlTr1mcY6EqJJkOIyTXWjlr9
