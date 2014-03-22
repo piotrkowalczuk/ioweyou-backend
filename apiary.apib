@@ -27,7 +27,7 @@ The Gist resource has the following attributes:
 - lender_last_name
 - lender_username
 
-## Entries [/entries{?contractor}{?from}{?to}{?limit}{?name}{?offset}{?status}]
+## Entries [/entries]
 ### Create a entry [POST]
 + Request
 
@@ -170,3 +170,32 @@ The Gist resource has the following attributes:
           "isModified": 1
         }
         
+## Entry accept [/entry/accept/{id}]
+### Accept a entry [POST]
++ Request
+
+    + Headers
+        
+            Authorization: 19f036e9-8ff3-4cff-895c-d763757754d6
+        
+            
++ Response 200 (application/json)
+
+        {
+          "isModified": 1
+        }
+
+## Entry accept [/entry/reject/{id}]
+### Reject a entry [POST]
++ Request
+
+    + Headers
+        
+            Authorization: 19f036e9-8ff3-4cff-895c-d763757754d6
+        
+            
++ Response 200 (application/json)
+
+        {
+          "isModified": 1
+        }
