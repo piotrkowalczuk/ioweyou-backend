@@ -1,0 +1,148 @@
+FORMAT: 1A
+HOST: http://www.ioweyou.pl/api
+
+# I Owe YOU!
+Public API of ***I Owe YOU!*** application.
+
+# Group Entry
+Entry related resources of the **Entry API**
+
+The Gist resource has the following attributes:
+
+- id
+- name
+- description
+- value
+- lender_id
+- accepted_at
+- created_at
+- updated_at
+- debtor_id
+- rejected_at
+- status
+- debtor_first_name
+- debtor_last_name
+- debtor_username
+- lender_first_name
+- lender_last_name
+- lender_username
+
+## Entries [/entries]
+
+### Create a entry [POST]
++ Request
+
+    + Headers
+        
+            Authorization: 19f036e9-8ff3-4cff-895c-d763757754d6
+    
+    + Body
+    
+            {
+                "name": 'sample name', 
+                "description": 'sample description',
+                "value": '5432.00', 
+                "includeMe" 1,
+                "contractors": [1, 2, 4]
+            }
+            
++ Response 201 (application/json)
+
+        {
+            "isCreated": 1
+        }
+        
+        
+## Entries Summary [/entries/summary]  
+### Summary [GET]
++ Request
+
+    + Headers
+        
+            Authorization: 19f036e9-8ff3-4cff-895c-d763757754d6
+    
+    + Body
+    
+            {
+                "summary": 12312, 
+            }
+            
++ Response 201 (application/json)
+
+        {
+            "isCreated": 1
+        }
+
+
+## Entry [/entry/{id}]
+
++ Parameters
+
+    + id (integer) ... ID of the Entry.
+    
+### Fetch a entry [GET]
++ Request
+
+    + Headers
+        
+            Authorization: 19f036e9-8ff3-4cff-895c-d763757754d6
+            
++ Response 200 (application/json)
+
+        {
+            "id": 1, 
+            "name": 'sample name', 
+            "description": 'sample description',
+            "value": '5432.00', 
+            "lender_id": 1, 
+            "accepted_at": Wed Sep 18 2013 20:52:06 GMT+0200 (CEST),
+            "created_at": Wed Aug 14 2013 20:09:48 GMT+0200 (CEST),
+            "updated_at": Wed Oct 02 2013 20:26:57 GMT+0200 (CEST),
+            "debtor_id": 2,
+            "rejected_at": null,
+            "status": 0, 
+            "debtor_first_name": 'DebtorFirstName',
+            "debtor_last_name": 'DebtorLastName',
+            "debtor_username": 'debtor',
+            "lender_first_name": 'LenderFirstName',
+            "lender_last_name": 'LenderLastName',
+            "lender_username": 'lender'
+        }
+
+### Modify a entry [PUT]
++ Request (application/json)
+
+    + Headers
+        
+            Authorization: 19f036e9-8ff3-4cff-895c-d763757754d6
+            
+    + Body
+    
+            { 
+                "description": "Lorem ipsum...",
+                "name": "Lorem ipsum...",
+                "value": "1234.56"
+            }
+        
+            
++ Response 200 (application/json)
+
+        {
+            "isModified": 1
+        }
+        
+        
+### Delete a entry [DELETE]
++ Request
+
+    + Headers
+        
+            Authorization: 19f036e9-8ff3-4cff-895c-d763757754d6
+        
+            
++ Response 200 (application/json)
+
+        {
+          "isModified": 1
+        }
+        
