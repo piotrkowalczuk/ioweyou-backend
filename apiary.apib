@@ -27,8 +27,7 @@ The Gist resource has the following attributes:
 - lender_last_name
 - lender_username
 
-## Entries [/entries]
-
+## Entries [/entries{?contractor}{?from}{?to}{?limit}{?name}{?offset}{?status}]
 ### Create a entry [POST]
 + Request
 
@@ -53,27 +52,52 @@ The Gist resource has the following attributes:
         }
         
         
-## Entries Summary [/entries/summary]  
+## Entries Summary [/entries/summary{?contractor}{?from}{?to}{?limit}{?name}{?offset}{?status}]  
++ Parameters
+    + contractor (optional, integer) ... user id
+    + from (optional, timestamp) ... date from
+    + limit (optional, integer) ... limit of entries to fetch
+    + name (optional, string) ... part of the name
+    + offset (optional, string) ... offset
+    + status (optional, string) ... status of entry
+    + to (optional, timestamp) ... date to
+    
 ### Summary [GET]
 + Request
 
     + Headers
         
             Authorization: 19f036e9-8ff3-4cff-895c-d763757754d6
-    
-    + Body
-    
-            {
-                "summary": 12312, 
-            }
             
-+ Response 201 (application/json)
++ Response 200 (application/json)
 
         {
-            "isCreated": 1
+            "summary": 12312, 
         }
 
+## Entries count [/entries/count{?contractor}{?from}{?to}{?limit}{?name}{?offset}{?status}]  
++ Parameters
+    + contractor (optional, integer) ... user id
+    + from (optional, timestamp) ... date from
+    + limit (optional, integer) ... limit of entries to fetch
+    + name (optional, string) ... part of the name
+    + offset (optional, string) ... offset
+    + status (optional, string) ... status of entry
+    + to (optional, timestamp) ... date to
+    
+### Summary [GET]
++ Request
 
+    + Headers
+        
+            Authorization: 19f036e9-8ff3-4cff-895c-d763757754d6
+            
++ Response 200 (application/json)
+
+        {
+            "aggregate": 12312, 
+        }
+        
 ## Entry [/entry/{id}]
 
 + Parameters
