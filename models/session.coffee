@@ -1,42 +1,50 @@
 db = require '../db'
+config = require '../config'
 
 module.exports =
-  getUserApiToken: (uid, next) ->
-    getUserApiToken(uid, next)
-  getUserFieldValue: (uid, next) ->
-    getUserFieldValue(uid, next)
-  getUserData: (uid, next) ->
-    getUserData(uid, next)
+  sessionExists: (token, next) ->
+    sessionExists(token, next)
+  getUserFieldValue: (token, next) ->
+    getUserFieldValue(token, next)
+  getUserData: (token, next) ->
+    getUserData(token, next)
   setUserData: (uid, userData) ->
     setUserData(uid, userData)
   getUserId: (uid, next) ->
     getUserId(uid, next)
 
 
-getUserFieldValue = (uid, field, next) ->
-  db.redis.get uid, (error, reply) ->
+sessionExists = (token, next) ->
+  db.redis.get token, (error, reply) ->
     if not error and reply
+      db.redis.expire token, config.session.expiration
+      next(true)
+    else
+      next(false)
+
+getUserFieldValue = (token, field, next) ->
+  db.redis.get token, (error, reply) ->
+    if not error and reply
+      db.redis.expire token, config.session.expiration
       user = JSON.parse(reply)
       next(user[field])
     else
       next(false)
 
 
-getUserData = (uid, next) ->
-  db.redis.get uid, (error, reply) ->
+getUserData = (token, next) ->
+  db.redis.get token, (error, reply) ->
     if not error and reply
+      db.redis.expire token, config.session.expiration
       next(JSON.parse(reply))
     else
       next(false)
 
 
-setUserData = (uid, userData) ->
-  db.redis.set uid, JSON.stringify(userData)
+setUserData = (token, userData) ->
+  db.redis.set token, JSON.stringify(userData)
+  db.redis.expire token, config.session.expiration
 
 
-getUserApiToken = (uid, next) ->
-  getUserFieldValue(uid, 'ioweyouToken', next)
-
-
-getUserId = (uid, next) ->
-  getUserFieldValue(uid, 'ioweyouId', next)
+getUserId = (token, next) ->
+  getUserFieldValue(token, 'ioweyouId', next)

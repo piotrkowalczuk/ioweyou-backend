@@ -14,11 +14,13 @@ module.exports =
   findAllByFacebookIds: (facebookIds, next) ->
     findAllByFacebookIds(facebookIds, next)
 
+
 create = (fields, next) ->
   db.postgres('user')
     .insert(fields)
     .returning('id')
     .exec next
+
 
 getBy = (fieldName, value, next) ->
   db.postgres()
@@ -47,6 +49,7 @@ getById = (id, next) ->
 getByFacebookId = (value, next) ->
   getBy('sau.uid', value, next)
 
+
 findAllByFacebookIds = (facebookIds, next) ->
   db.postgres()
     .from('user')
@@ -61,6 +64,7 @@ findAllByFacebookIds = (facebookIds, next) ->
     .join('user_social as sau', 'sau.user_id', '=', 'user.id', 'left')
     .whereIn('sau.uid', facebookIds)
     .exec next
+
 
 getFriends = (id, next) ->
   subQuery = db.postgres.raw('

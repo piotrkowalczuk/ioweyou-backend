@@ -28,17 +28,17 @@ describe 'model/entry', ()->
             done()
 
     it "should return entry, if entry exists", (done)->
-      entryTable.getById 1, (entry)->
+      entryTable.getById 1, (error, entry)->
         expect(entry).to.have.property 'id', 1
         done()
 
     it "should return undefined, if entry doesn't exists", (done)->
-      entryTable.getById 9999, (entry)->
+      entryTable.getById 9999, (error, entry)->
         expect(entry).to.be.undefined
         done()
 
     it "should return undefined, if entry exists but is deleted", (done)->
-      entryTable.getById 3, (entry)->
+      entryTable.getById 3, (error, entry)->
         expect(entry).to.be.undefined
         done()
 
@@ -51,17 +51,17 @@ describe 'model/entry', ()->
             done()
 
     it "should return entry, if user is lender", (done)->
-      entryTable.getUserEntryById 1, 1, (entry)->
+      entryTable.getUserEntryById 1, 1, (error, entry)->
         expect(entry).to.have.property 'id', 1
         done()
 
     it "should return entry, if user is debtor", (done)->
-      entryTable.getUserEntryById 1, 2, (entry)->
+      entryTable.getUserEntryById 1, 2, (error, entry)->
         expect(entry).to.have.property 'id', 2
         done()
 
     it "should return undefined, if entry exists but is deleted", (done)->
-      entryTable.getUserEntryById 1, 3, (entry)->
+      entryTable.getUserEntryById 1, 3, (error, entry)->
         expect(entry).to.be.undefined
         done()
 
@@ -74,7 +74,7 @@ describe 'model/entry', ()->
             done()
 
     it "should return 8 entries, if user is lender and there is no filters", (done)->
-      entryTable.getAll 1, {}, (entries)->
+      entryTable.getAll 1, {}, (error, entries)->
         expect(entries.length).to.eql(8)
         done()
 
@@ -82,7 +82,7 @@ describe 'model/entry', ()->
       filters =
         from: moment("1999-02-02 00:00:00").valueOf()
 
-      entryTable.getAll 1, filters, (entries)->
+      entryTable.getAll 1, filters, (error, entries)->
         expect(entries.length).to.eql(2)
         done()
 
@@ -90,7 +90,7 @@ describe 'model/entry', ()->
       filters =
         to: moment("1999-01-01 00:00:00").valueOf()
 
-      entryTable.getAll 1, filters, (entries)->
+      entryTable.getAll 1, filters, (error, entries)->
         expect(entries.length).to.eql(1)
         done()
 
@@ -98,7 +98,7 @@ describe 'model/entry', ()->
       filters =
         contractor: 3
 
-      entryTable.getAll 1, filters, (entries)->
+      entryTable.getAll 1, filters, (error, entries)->
         expect(entries.length).to.eql(1)
         done()
 
@@ -106,7 +106,7 @@ describe 'model/entry', ()->
       filters =
         status: 3
 
-      entryTable.getAll 1, filters, (entries)->
+      entryTable.getAll 1, filters, (error, entries)->
         expect(entries.length).to.eql(0)
         done()
 
@@ -114,7 +114,7 @@ describe 'model/entry', ()->
       filters =
         status: 2
 
-      entryTable.getAll 1, filters, (entries)->
+      entryTable.getAll 1, filters, (error, entries)->
         expect(entries.length).to.eql(1)
         done()
 
@@ -122,7 +122,7 @@ describe 'model/entry', ()->
       filters =
         name: "entry"
 
-      entryTable.getAll 1, filters, (entries)->
+      entryTable.getAll 1, filters, (error, entries)->
         expect(entries.length).to.eql(8)
         done()
 
@@ -130,7 +130,7 @@ describe 'model/entry', ()->
       filters =
         name: "1"
 
-      entryTable.getAll 1, filters, (entries)->
+      entryTable.getAll 1, filters, (error, entries)->
         expect(entries.length).to.eql(2)
         done()
 
@@ -138,7 +138,7 @@ describe 'model/entry', ()->
       filters =
         limit: 4
 
-      entryTable.getAll 1, filters, (entries)->
+      entryTable.getAll 1, filters, (error, entries)->
         expect(entries.length).to.eql(4)
         done()
 
@@ -147,12 +147,12 @@ describe 'model/entry', ()->
         limit: 4
         offset: 6
 
-      entryTable.getAll 1, filters, (entries)->
+      entryTable.getAll 1, filters, (error, entries)->
         expect(entries.length).to.eql(2)
         done()
 
     it "should return no entries, if user does not exists", (done)->
-      entryTable.getAll 4, {}, (entries)->
+      entryTable.getAll 4, {}, (error, entries)->
         expect(entries.length).to.eql(0)
         done()
 

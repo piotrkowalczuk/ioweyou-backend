@@ -54,7 +54,7 @@ login = (req, res) ->
       ioweyouToken: uuid.v4()
       ioweyouId: user.id.toString()
 
-    req.session.setUserData loggedUser.ioweyouId, loggedUser
+    req.session.setUserData loggedUser.ioweyouToken, loggedUser
     res.header "Content-Type", "application/json"
     res.status 200
     res.send loggedUser

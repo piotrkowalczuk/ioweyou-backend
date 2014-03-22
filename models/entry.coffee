@@ -1,7 +1,6 @@
 db = require '../db'
 moment = require 'moment'
 
-
 module.exports =
   getById: (id, next) ->
     getById(id, next)
@@ -24,9 +23,7 @@ module.exports =
   remove: (userId, entryId, next) ->
     remove(userId, entryId, next)
 
-
 getEntryQuery = ()->
-
   db.postgres()
     .from('entry')
     .select(
@@ -41,21 +38,14 @@ getEntryQuery = ()->
     .join('user as debtor', 'debtor.id', '=', 'entry.debtor_id', 'left')
     .join('user as lender', 'lender.id', '=', 'entry.lender_id', 'left')
 
-
 create = (fields, next) ->
-
   db.postgres('entry')
     .insert(fields)
     .returning('id')
     .exec (error, reply) ->
-      if not error
-        next(200, reply)
-      else
-        next(403)
-
+      next(error, reply)
 
 modify = (userId, entryId, fields, next) ->
-
   db.postgres('entry')
     .update(fields)
     .where('id', '=', entryId)
@@ -63,43 +53,32 @@ modify = (userId, entryId, fields, next) ->
       sub.where('debtor_id', userId)
         .orWhere('lender_id', userId)
     .exec (error, reply) ->
-      if not error and reply > 0
-        next(200, true)
-      if not error and reply is 0
-        next(200, false)
-      else
-        next(403)
-
+      next(error, reply)
 
 getById = (id, next) ->
-
   getEntryQuery()
     .where('entry.id', id)
     .where('entry.status', '<', '3')
     .exec (error, reply) ->
-      if not error
-        next(reply[0])
+      if error
+        next(error, null)
       else
-        next(false)
-
+        next(null, reply[0])
 
 getUserEntryById = (userId, entryId, next) ->
-
   getEntryQuery()
     .where('entry.id', entryId)
     .where('entry.status', '<', '3')
     .where (sub) ->
       sub.where('debtor.id', userId)
       .orWhere('lender.id', userId)
-
     .exec (error, reply) ->
-      if not error
-        next(reply[0])
+      if error
+        next(error, null)
       else
-        next(false)
+        next(null, reply[0])
 
 getCount = (userId, filters, next) ->
-
   query = db.postgres()
     .from('entry')
     .count('id')
@@ -126,13 +105,9 @@ getCount = (userId, filters, next) ->
     query.where('name', 'ilike', '%'+filters.name+'%')
 
   query.exec (error, reply) ->
-      if not error
-        next(reply[0])
-      else
-        next(false)
+    next(error, reply)
 
 getAll = (userId, filters, next) ->
-
   query = getEntryQuery()
     .where (sub) ->
       sub.where('debtor_id', userId)
@@ -160,15 +135,9 @@ getAll = (userId, filters, next) ->
     query.where('name', 'ilike', '%'+filters.name+'%')
 
   query.exec (error, reply) ->
-    if not error
-      next(reply)
-    else
-      next(false)
-
-
+    next(error, reply)
 
 getSummary = (userId, filters, next) ->
-
   query = db.postgres()
     .from('entry')
     .select('entry.value', 'entry.lender_id', 'entry.debtor_id')
@@ -205,54 +174,33 @@ getSummary = (userId, filters, next) ->
           summary = parseFloat(summary) + parseFloat(row.value)
         i = i + 1
 
-      next error, summary.toFixed(2)
+      next null, summary.toFixed(2)
     else
       next error, null
 
-
 accept = (userId, entryId, next) ->
-
   db.postgres('entry')
     .update({'accepted_at': new Date(), 'status': 1})
     .where('id', '=', entryId)
     .whereIn('status', [0,2]) # open|rejected
     .where('debtor_id', '=', userId)
     .exec (error, reply) ->
-      if not error and reply > 0
-        next(200, true)
-      if not error and reply is 0
-        next(200, false)
-      else
-        next(403)
-
+      next(error, reply)
 
 reject = (userId, entryId, next) ->
-
   db.postgres('entry')
     .update({'rejected_at': new Date(), 'status': 2})
     .where('id', '=', entryId)
     .where('status', '=', 0) # open
     .where('debtor_id', '=', userId)
     .exec (error, reply) ->
-      if not error and reply > 0
-        next(200, true)
-      if not error and reply is 0
-        next(200, false)
-      else
-        next(403)
-
+      next(error, reply)
 
 remove = (userId, entryId, next) ->
-
   db.postgres('entry')
     .update({'status': 3})
     .where('id', '=', entryId)
     .where('status', '=', 0) # open
     .where('lender_id', '=', userId)
     .exec (error, reply) ->
-      if not error and reply > 0
-        next(200, true)
-      if not error and reply is 0
-        next(200, false)
-      else
-        next(403)
+      next(error, reply)

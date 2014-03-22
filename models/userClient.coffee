@@ -23,10 +23,7 @@ getBy = (fieldName, value, next) ->
     )
     .where(fieldName, value)
     .exec (error, reply) ->
-      if not error
-        next(reply[0])
-      else
-        next(false)
+      next(error, reply)
 
 
 getById = (id, next) ->
@@ -38,25 +35,15 @@ getByUserId = (userId, next) ->
 
 
 create = (fields, next) ->
-
   db.postgres('user_client')
     .insert(fields)
     .exec (error, reply) ->
-      if not error and reply > 0
-        next(200)
-      if error
-        next(500)
+      next(error, reply)
 
 
 modify = (id, fields, next) ->
-
   db.postgres('user_client')
     .update(fields)
     .where('id', '=', id)
     .exec (error, reply) ->
-      if not error and reply > 0
-        next(200, true)
-      if not error and reply is 0
-        next(200, false)
-      else
-        next(500)
+      next(error, reply)

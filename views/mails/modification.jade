@@ -17,7 +17,7 @@ head
                                             b  Entry has been modified.
                                     tr
                                         td(style='vertical-align: top; padding: 23px 10px 30px 0; color: #153643; font-family: Arial, sans-serif; font-size: 16px; line-height: 20px;')
-                                            img(src='http://graph.facebook.com/#{debtor.username}/picture', alt='')
+                                            img(src='http://graph.facebook.com/#{lender.username}/picture', alt='')
                                         td(style='padding: 20px 0 30px 0; color: #153643; font-family: Arial, sans-serif; font-size: 16px; line-height: 20px;')
                                             b #{entry.name}
                                             br
@@ -25,6 +25,9 @@ head
                                     tr
                                         td(colspan='2', style='color: #ff3366; font-family: Arial, sans-serif; font-size: 24px; text-align:center;')
                                             b  -#{entry.value}zł
+                                    tr
+                                        td(colspan='2', style='color: #ff3366; font-family: Arial, sans-serif; font-size: 24px; text-align:center;')
+                                            a(href='http://ioweyou.pl/entry/show/{entry.id}/picture', alt='')
                         tr
                             td(bgcolor='#006666', style='padding: 30px 30px 30px 30px;')
                                 table(border='0', cellpadding='0', cellspacing='0', width='100%')

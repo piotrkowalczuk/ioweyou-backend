@@ -1,6 +1,8 @@
 module.exports =
   app:
     port: 8000
+  session:
+    expiration: 1209600
   database:
     client: 'pg',
     connection:

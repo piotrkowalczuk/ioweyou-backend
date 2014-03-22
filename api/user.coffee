@@ -3,11 +3,12 @@ auth = require '../lib/auth'
 userTable = require '../models/user'
 
 module.exports = (app) ->
-  app.get '/user/friends', getFriends
-  app.get '/user/:id', getById
+  app.get '/user/friends', auth.tokenAuth, getFriends
+  app.get '/user/:id', auth.tokenAuth, getById
 
 getById = (req, res) ->
   userId = req.params.id
+
   userTable.getById userId, (user) =>
     if user
       res.header "Content-Type", "application/json"
@@ -16,7 +17,9 @@ getById = (req, res) ->
       res.status(404).send()
 
 getFriends = (req, res) ->
-  userTable.getFriends req.query.uid, (friends) =>
+  userId = res.locals.user.ioweyouId
+
+  userTable.getFriends userId, (friends) =>
     if friends
       res.header "Content-Type", "application/json"
       res.send(friends)

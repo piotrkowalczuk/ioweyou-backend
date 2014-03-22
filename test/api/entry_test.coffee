@@ -15,8 +15,8 @@ describe 'api/entry', ->
     server.close()
     done()
 
-  it "should return code 401, when GET \"/entry\" route without credentials", (done)->
-    http.get serverHelper.getHeaders("GET", "/entry"), (res)->
+  it "should return code 401, when GET \"/entries\" route without credentials", (done)->
+    http.get serverHelper.getHeaders("GET", "/entries"), (res)->
       res.on 'data', (chunk)->
         res.statusCode.should.eql(401)
       res.on 'end', ()->
@@ -44,14 +44,14 @@ describe 'api/entry', ->
         done()
 
   it "should return code 401, when PUT \"/entry\" route without credentials", (done)->
-    http.get serverHelper.getHeaders("PUT", "/entry"), (res)->
+    http.get serverHelper.getHeaders("POST", "/entry"), (res)->
       res.on 'data', (chunk)->
         res.statusCode.should.eql(401)
       res.on 'end', ()->
         done()
 
   it "should return code 401, when POST \"/entry/:id\" route without credentials", (done)->
-    http.get serverHelper.getHeaders("POST", "/entry/1"), (res)->
+    http.get serverHelper.getHeaders("PUT", "/entry/1"), (res)->
       res.on 'data', (chunk)->
         res.statusCode.should.eql(401)
       res.on 'end', ()->

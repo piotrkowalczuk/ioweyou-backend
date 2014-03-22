@@ -14,7 +14,7 @@
     "knex": "0.4.13",
     "moment": "2.x",
     "apnagent": "1.0.x",
-    "express-validator": "*",
+    "express-validator": "2.1.x",
     "express-mailer": "0.2.x",
     "jade": "0.35.0",
     "apnagent": "*",

@@ -10,18 +10,15 @@ session = require '../models/session'
 
 
 module.exports = (app) ->
-  #GET
-  app.get '/entry', auth.tokenAuth, filters, list
-  app.get '/entry/summary', auth.tokenAuth, filters, summary
-  app.get '/entry/count', auth.tokenAuth, filters, count
+  app.get '/entries', auth.tokenAuth, filters, list
+  app.get '/entries/summary', auth.tokenAuth, filters, summary
+  app.get '/entries/count', auth.tokenAuth, filters, count
+
   app.get '/entry/:id', auth.tokenAuth, one
-  #PUT
-  app.put '/entry',auth.tokenAuth, create
-  #POST
-  app.post '/entry/:id', auth.tokenAuth, modify
+  app.put '/entry/:id', auth.tokenAuth, modify
+  app.post '/entry',auth.tokenAuth, create
   app.post '/entry/accept/:id', auth.tokenAuth, accept
   app.post '/entry/reject/:id', auth.tokenAuth, reject
-  #DELETE
   app.delete '/entry/:id', auth.tokenAuth, remove
 
 
@@ -31,9 +28,9 @@ filters = (req, res, next) ->
 
   if req.query.limit
     req.assert('limit', {
-    max: 'Maximum value is 100.',
-    isInt: 'Integer expected.'
-    }).max(100).isInt()
+      isLength: 'Maximum value is 100.',
+      isInt: 'Integer expected.'
+    }).isLength(0, 100).isInt()
 
   if req.query.offset
     req.assert('offset', 'Invalid offset format. Expected integer').isInt()
@@ -71,43 +68,60 @@ filters = (req, res, next) ->
 one = (req, res) ->
   req.assert('id', 'Invalid entry ID').notEmpty().isInt()
 
-  if not req.validationErrors()
-    entryId = req.params.id
-    userId = req.query.uid
-
-    entryTable.getUserEntryById userId, entryId, (entry) ->
-      if entry
-        res.header "Content-Type", "application/json"
-        res.send(entry)
-      else
-        res.status(404).send("Not Found.")
-  else
+  if req.validationErrors()
     res.status(400).send()
+  else
+    entryId = req.params.id
+    userId = res.locals.user.ioweyouId
+
+    entryTable.getUserEntryById userId, entryId, (error, entry) ->
+      res.header "Content-Type", "application/json"
+      if error
+        res.status(500).send()
+      else if entry
+        res.send entry
+      else
+        res.status(404).send()
+
 
 list = (req, res) ->
-  entryTable.getAll req.query.uid, res.locals.filters, (entries) ->
-    if entries
-      res.header "Content-Type", "application/json"
-      res.send(entries)
+  userId = res.locals.user.ioweyouId
+
+  entryTable.getAll userId, res.locals.filters, (error, entries) ->
+    res.header "Content-Type", "application/json"
+    if error
+      res.status(500).send {error: 'Internal Server Error.'}
+    else if entries
+      res.send entries
     else
-      res.status(404).send()
+      res.status(404).send {error: "Not Found."}
+
 
 summary = (req, res) ->
-  console.log(res.locals.filters);
-  entryTable.getSummary req.query.uid, res.locals.filters, (error, summary) ->
-    if not error
-      res.header "Content-Type", "application/json"
+  userId = res.locals.user.ioweyouId
+
+  entryTable.getSummary userId, res.locals.filters, (error, summary) ->
+    res.header "Content-Type", "application/json"
+    if error
+      res.status(500).send({error: 'Internal Server Error.'})
+    else if summary
       res.send JSON.stringify({summary: summary})
     else
-      res.status(404).send("Not Found.")
+      res.status(404).send {error: 'Not Found.'}
+
 
 count = (req, res) ->
-  entryTable.getCount req.query.uid, res.locals.filters, (count) ->
-    if count
-      res.header "Content-Type", "application/json"
+  userId = res.locals.user.ioweyouId
+
+  entryTable.getCount userId, res.locals.filters, (error, count) ->
+    res.header "Content-Type", "application/json"
+    if error
+      res.status(500).send("Internal Server Error.")
+    else if count
       res.send(count)
     else
       res.status(404).send("Not Found.")
+
 
 create = (req, res) ->
   req.checkBody('name', 'Nazwa nie może być pusta.').notEmpty()
@@ -115,9 +129,10 @@ create = (req, res) ->
   req.checkBody('includeMe', '').isInt()
   req.checkBody('contractors', 'Musisz wybrać chociaż jedną osobę.').notEmpty()
 
-  if not req.validationErrors()
-
-    userId = req.body.uid
+  if req.validationErrors()
+    res.status(400).send()
+  else
+    userId = res.locals.user.ioweyouId
     name = req.body.name
     contractors = req.body.contractors
     description = req.body.description
@@ -138,14 +153,14 @@ create = (req, res) ->
                 created_at: moment().format('YYYY-MM-DD HH:mm:ss')
                 updated_at: moment().format('YYYY-MM-DD HH:mm:ss')
 
-              entryTable.create values, (statusCode, entryId)->
-                if statusCode is not 200
-                  res.status(statusCode).send {entryId: entryId}
+              entryTable.create values, (error, entry)->
+                if error
+                  res.status(404).send()
                 else
                   session.getUserData userId, (user) ->
                     subject = "#{user.first_name} #{user.last_name} add dept to you."
 
-                    clientTable.getByUserId dbContractor.id, (client)->
+                    clientTable.getByUserId dbContractor.id, (error, client)->
                       if client
                         res.apn.createMessage()
                           .device(client.token)
@@ -159,60 +174,65 @@ create = (req, res) ->
                       name: name,
                       description: description,
                       value: value,
-                      contractor: dbContractor
+                      contractor: user
                     }, (error) ->
 
             else
-              res.status(404).send("Not Found.")
+              res.status(404).send()
 
-          res.status(200).send {isCreated: true}
+          res.status(201).send {isCreated: true}
       else
-        res.status(404).send("Not Found.")
-  else
-    res.status(400).send(req.validationErrors(true))
+        res.status(404).send()
 
 
 accept = (req, res) ->
   req.assert('id', 'Invalid uid').notEmpty().isInt()
 
-  if not req.validationErrors()
+  if req.validationErrors()
+    res.status(400).send()
+  else
     entryId = req.params.id
     userId = req.body.uid
 
-    entryTable.accept userId, entryId, (statusCode, isModified) ->
+    entryTable.accept userId, entryId, (error, isModified) ->
       if isModified
-        entryTable.getById entryId, (entry)->
-          userTable.getById entry.lender_id, (lender)->
-            userTable.getById entry.debtor_id, (debtor)->
-              subject = "#{debtor.first_name} #{debtor.last_name} accepted your entry."
+        entryTable.getById entryId, (error, entry)->
+          if error
+            res.status(400).send()
+          else
+            userTable.getById entry.lender_id, (lender)->
+              userTable.getById entry.debtor_id, (debtor)->
+                subject = "#{debtor.first_name} #{debtor.last_name} accepted your entry."
 
-              clientTable.getByUserId entry.lender_id, (client)->
-                if client
-                  res.apn.createMessage()
-                    .device(client.token)
-                    .alert(subject)
-                    .send()
+                clientTable.getByUserId entry.lender_id, (client)->
+                  if client
+                    res.apn.createMessage()
+                      .device(client.token)
+                      .alert(subject)
+                      .send()
 
-              res.mailer.send 'mails/acceptance', {
-                to: lender.email,
-                subject: subject,
-                entry: entry,
-                debtor: debtor
-              }, (error) ->
-
-      res.status(statusCode).send {isModified: isModified}
-  else
-    res.status(400).send()
+                res.mailer.send 'mails/acceptance', {
+                  to: lender.email,
+                  subject: subject,
+                  entry: entry,
+                  debtor: debtor
+                }, (error) ->
+      if error
+        res.status(400).send {isModified: isModified}
+      else
+        res.status(200).send {isModified: isModified}
 
 
 reject = (req, res) ->
   req.assert('id', 'Invalid uid').notEmpty().isInt()
 
-  if not req.validationErrors()
+  if req.validationErrors()
+    res.status(400).send()
+  else
     entryId = req.params.id
     userId = req.body.uid
 
-    entryTable.reject userId, entryId, (statusCode, isModified) ->
+    entryTable.reject userId, entryId, (error, isModified) ->
       if isModified
         entryTable.getById entryId, (entry)->
           userTable.getById entry.lender_id, (lender)->
@@ -234,22 +254,29 @@ reject = (req, res) ->
                 debtor: debtor
                 }, (error) ->
 
-      res.status(statusCode).send {isModified: isModified}
-  else
-    res.status(404).send()
+      if error
+        res.status(500).send()
+      else
+        res.status(200).send {isModified: isModified}
 
 
 remove = (req, res) ->
   req.assert('id', 'Invalid uid').notEmpty().isInt()
 
-  if not req.validationErrors()
-    entryId = req.params.id
-    userId = req.query.uid
-
-    entryTable.remove userId, entryId, (statusCode, isModified) ->
-      res.status(statusCode).send {isModified: isModified}
+  if req.validationErrors()
+    res.status(400).send(req.validationErrors())
   else
-    res.status(400).send()
+    entryId = req.params.id
+    userId = res.locals.user.ioweyouId
+
+    entryTable.remove userId, entryId, (error, isModified) ->
+      res.header "Content-Type", "application/json"
+      if error
+        res.status(500).send()
+      else if isModified
+        res.status(204).send {isModified: isModified}
+      else
+        res.status(404).send()
 
 
 modify = (req, res) ->
@@ -257,9 +284,11 @@ modify = (req, res) ->
   req.checkBody('name', 'Nazwa nie może być pusta.').notEmpty()
   req.checkBody('value', 'Kwota nie może być pusta. Może być liczbą całkowitą lub zmienno przecinkową').isFloat()
 
-  if not req.validationErrors()
+  if req.validationErrors()
+    res.status(400).send(req.validationErrors())
+  else
     entryId = req.params.id
-    userId = req.body.uid
+    userId = res.locals.user.ioweyouId
     name = req.body.name
     description = req.body.description
     value = req.body.value
@@ -270,31 +299,35 @@ modify = (req, res) ->
       value: value
       updated_at: moment().format('YYYY-MM-DD HH:mm:ss')
 
-    entryTable.modify userId, entryId, values, (statusCode, isModified) ->
+    entryTable.modify userId, entryId, values, (error, isModified) ->
       if isModified
-        entryTable.getById entryId, (entry)->
-          userTable.getById entry.lender_id, (lender)->
-            userTable.getById entry.debtor_id, (debtor)->
+        entryTable.getById entryId, (error, entry)->
+          if error
+            res.status(400).send()
+          else
+            userTable.getById entry.lender_id, (lender)->
+              userTable.getById entry.debtor_id, (debtor)->
 
-              subject = "#{debtor.first_name} #{debtor.last_name} modified entry."
+                subject = "#{lender.first_name} #{lender.last_name} modified entry."
 
-              clientTable.getByUserId debtor.id, (client)->
-                if client
-                  res.apn.createMessage()
-                    .device(client.token)
-                    .alert(subject)
-                    .send()
+                clientTable.getByUserId debtor.id, (client)->
+                  if client
+                    res.apn.createMessage()
+                      .device(client.token)
+                      .alert(subject)
+                      .send()
 
-              res.mailer.send 'mails/modification', {
-                to: debtor.email,
-                subject: subject,
-                entry: entry,
-                debtor: debtor
-                }, (error) ->
+                res.mailer.send 'mails/modification', {
+                  to: debtor.email,
+                  subject: subject,
+                  entry: entry,
+                  lender: lender
+                  }, (error) ->
 
-      res.status(statusCode).send {isModified: isModified}
-  else
-    res.status(400).send(req.validationErrors())
+      if error
+        res.status(500).send()
+      else
+        res.status(200).send {isModified: isModified}
 
 
 

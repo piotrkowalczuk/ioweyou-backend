@@ -3,7 +3,7 @@ auth = require '../lib/auth'
 clientTable = require '../models/userClient'
 
 module.exports = (app) ->
-  app.post '/user-client/add-or-create', auth.tokenAuth, addOrCreate
+  app.put '/user-client/add-or-create', auth.tokenAuth, addOrCreate
 
 addOrCreate = (req, res) ->
   req.assert('name', 'Invalid device name').notEmpty()

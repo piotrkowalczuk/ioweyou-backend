@@ -10,14 +10,15 @@ module.exports =
 
 tokenAuth = (req, res, next) ->
   req.session = session
-  req.assert('uid', 'Invalid uid').notEmpty().isInt()
-  req.assert('apiToken', 'Invalid apiToken').isUUIDv4()
 
-  if not req.validationErrors()
-    req.session.getUserApiToken req.param('uid'), (apiToken) ->
-      if apiToken is req.param('apiToken')
+  token = req.header 'Authorization'
+
+  if not token
+    res.status(401).send 'Unauthorized'
+  else
+    req.session.getUserData token, (userData) ->
+      if userData
+        res.locals.user = userData;
         next()
       else
         res.status(403).send 'Forbidden'
-  else
-    res.status(401).send 'Unauthorized'
