@@ -105,7 +105,10 @@ getCount = (userId, filters, next) ->
     query.where('name', 'ilike', '%'+filters.name+'%')
 
   query.exec (error, reply) ->
-    next(error, reply)
+    if error
+      next(error, null)
+    else
+      next(null, reply[0])
 
 getAll = (userId, filters, next) ->
   query = getEntryQuery()
