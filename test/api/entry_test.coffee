@@ -43,15 +43,15 @@ describe 'api/entry', ->
       res.on 'end', ()->
         done()
 
-  it "should return code 401, when PUT \"/entry\" route without credentials", (done)->
-    http.get serverHelper.getHeaders("POST", "/entry"), (res)->
+  it "should return code 401, when POST \"/entries\" route without credentials", (done)->
+    http.get serverHelper.getHeaders("POST", "/entries"), (res)->
       res.on 'data', (chunk)->
         res.statusCode.should.eql(401)
       res.on 'end', ()->
         done()
 
-  it "should return code 401, when POST \"/entry/:id\" route without credentials", (done)->
-    http.get serverHelper.getHeaders("PUT", "/entry/1"), (res)->
+  it "should return code 401, when PATCH \"/entry/:id\" route without credentials", (done)->
+    http.get serverHelper.getHeaders("PATCH", "/entry/1"), (res)->
       res.on 'data', (chunk)->
         res.statusCode.should.eql(401)
       res.on 'end', ()->

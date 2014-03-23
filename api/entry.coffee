@@ -13,10 +13,10 @@ module.exports = (app) ->
   app.get '/entries', auth.tokenAuth, filters, list
   app.get '/entries/summary', auth.tokenAuth, filters, summary
   app.get '/entries/count', auth.tokenAuth, filters, count
+  app.post '/entries',auth.tokenAuth, create
 
   app.get '/entry/:id', auth.tokenAuth, one
-  app.put '/entry/:id', auth.tokenAuth, modify
-  app.post '/entry',auth.tokenAuth, create
+  app.patch '/entry/:id', auth.tokenAuth, modify
   app.post '/entry/accept/:id', auth.tokenAuth, accept
   app.post '/entry/reject/:id', auth.tokenAuth, reject
   app.delete '/entry/:id', auth.tokenAuth, remove
