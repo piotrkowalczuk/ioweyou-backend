@@ -23,7 +23,12 @@ getBy = (fieldName, value, next) ->
     )
     .where(fieldName, value)
     .exec (error, reply) ->
-      next(error, reply)
+      if error
+        next(error, null)
+      else if reply.length is 1
+        next(null, reply[0])
+      else
+        next()
 
 
 getById = (id, next) ->

@@ -13,7 +13,7 @@ addOrCreate = (req, res) ->
 
     userId = res.locals.user.ioweyouId
 
-    clientTable.getByUserId userId, (client) ->
+    clientTable.getByUserId userId, (error, client) ->
 
       values =
         user_id: userId

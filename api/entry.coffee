@@ -204,7 +204,7 @@ accept = (req, res) ->
               userTable.getById entry.debtor_id, (debtor)->
                 subject = "#{debtor.first_name} #{debtor.last_name} accepted your entry."
 
-                clientTable.getByUserId entry.lender_id, (client)->
+                clientTable.getByUserId entry.lender_id, (error, client)->
                   if client
                     res.apn.createMessage()
                       .device(client.token)
@@ -234,13 +234,13 @@ reject = (req, res) ->
 
     entryTable.reject userId, entryId, (error, isModified) ->
       if isModified
-        entryTable.getById entryId, (entry)->
+        entryTable.getById entryId, (error, entry)->
           userTable.getById entry.lender_id, (lender)->
             userTable.getById entry.debtor_id, (debtor)->
 
               subject = "#{debtor.first_name} #{debtor.last_name} rejected your entry."
 
-              clientTable.getByUserId entry.lender_id, (client)->
+              clientTable.getByUserId debtor.id, (error, client)->
                 if client
                   res.apn.createMessage()
                     .device(client.token)
@@ -310,7 +310,7 @@ modify = (req, res) ->
 
                 subject = "#{lender.first_name} #{lender.last_name} modified entry."
 
-                clientTable.getByUserId debtor.id, (client)->
+                clientTable.getByUserId debtor.id, (error, client)->
                   if client
                     res.apn.createMessage()
                       .device(client.token)
