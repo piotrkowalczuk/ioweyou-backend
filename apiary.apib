@@ -4,10 +4,35 @@ HOST: http://www.ioweyou.pl/api
 # I Owe YOU!
 Public API of ***I Owe YOU!*** application.
 
+# Group Auth
+
+## Login [/login]  
+Method is used to retrieve user access token and details about them. Pass is a mandatory data. Its a facebook access token for *I Owe YOU!* application.
+### Login [GET]
++ Request
+
+    + Body
+
+            {
+                pass: 'facebookApplicationToken'
+            }
+            
++ Response 200 (application/json)
+
+        {
+            email: "jan.kowalski@example.com"
+            facebookId: "1234567890"
+            first_name: "Jan"
+            ioweyouId: "1"
+            ioweyouToken: "27652f01-175e-471a-96f8-eed64295b5be"
+            last_name: "Kowalski"
+            username: "jan.kowalski"
+        }
+            
 # Group Entry
 Entry related resources of the **Entry API**
 
-The Gist resource has the following attributes:
+The Entry resource has the following attributes:
 
 - id
 - name
