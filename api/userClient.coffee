@@ -21,12 +21,20 @@ addOrCreate = (req, res) ->
         token: req.body.token
 
       if client
-        clientTable.modify client.id, values, (statusCode, isModified) ->
-          res.status(statusCode).send {isModified: isModified}
+        clientTable.modify client.id, values, (error, isModified) ->
+          if error
+            res.status(500).send()
+          else if isModified
+            res.header "Content-Type", "application/json"
+            res.send JSON.stringify({isModified: isModified})
 
       else
-        clientTable.create values, (statusCode, isCreated) ->
-          res.status(statusCode).send {isCreated: isCreated}
+        clientTable.create values, (error, isCreated) ->
+          if error
+            res.status(500).send()
+          else if isCreated
+            res.header "Content-Type", "application/json"
+            res.send JSON.stringify({isCreated: isCreated})
 
   else
     res.send(400).send()
