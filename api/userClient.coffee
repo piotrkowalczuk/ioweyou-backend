@@ -11,7 +11,7 @@ addOrCreate = (req, res) ->
 
   if not req.validationErrors()
 
-    userId = req.body.uid
+    userId = res.locals.user.ioweyouId
 
     clientTable.getByUserId userId, (client) ->
 

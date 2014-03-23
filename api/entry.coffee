@@ -192,7 +192,7 @@ accept = (req, res) ->
     res.status(400).send()
   else
     entryId = req.params.id
-    userId = req.body.uid
+    userId = res.locals.user.ioweyouId
 
     entryTable.accept userId, entryId, (error, isModified) ->
       if isModified
@@ -230,7 +230,7 @@ reject = (req, res) ->
     res.status(400).send()
   else
     entryId = req.params.id
-    userId = req.body.uid
+    userId = res.locals.user.ioweyouId
 
     entryTable.reject userId, entryId, (error, isModified) ->
       if isModified
