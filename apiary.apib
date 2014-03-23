@@ -285,3 +285,74 @@ The Entry resource has the following attributes:
         {
           "isModified": 1
         }
+        
+# Group User
+
+## Friends [/user/friends]  
+
+### Fetch [GET]
++ Request
+
+    + Headers
+        
+            Authorization: 19f036e9-8ff3-4cff-895c-d763757754d6
+            
++ Response 200 (application/json)
+
+        [
+          {
+            "id": 1,
+            "username": "janusz.kowalski",
+            "first_name": "Janusz",
+            "last_name": "Kowalski",
+            "email": "janusz.kowalski@example.com",
+            "uid": "1234567890"
+          },
+          {
+            "id": 2,
+            "username": "mariolka.kowalska",
+            "first_name": "Mariolka",
+            "last_name": "Kowalska",
+            "email": "mariolka.kowalska@example.com",
+            "uid": "1234567891"
+          },
+          {
+            "id": 3,
+            "username": "zbychu.kowalski",
+            "first_name": "Zbychu",
+            "last_name": "Kowalski",
+            "email": "zbychu.kowalski@example.com",
+            "uid": "1234567892"
+          },
+          
+          {
+            "id": 4,
+            "username": "eustachy.kowalski",
+            "first_name": "Eustachy",
+            "last_name": "Kowalski",
+            "email": "eustachy.kowalski@example.com",
+            "uid": "1234567893"
+          },
+        ]
+        
+        
+## User [/user/{id}]  
+
+### Fetch [GET]
++ Request
+
+    + Headers
+        
+            Authorization: 19f036e9-8ff3-4cff-895c-d763757754d6
+            
+
++ Response 200 (application/json)
+
+          {
+            "id": 1,
+            "username": "janusz.kowalski",
+            "first_name": "Janusz",
+            "last_name": "Kowalski",
+            "email": "janusz.kowalski@example.com",
+            "uid": "1234567890"
+          },
