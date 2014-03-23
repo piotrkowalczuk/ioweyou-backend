@@ -8,7 +8,7 @@ Public API of ***I Owe YOU!*** application.
 
 ## Login [/login]  
 Method is used to retrieve user access token and details about them. Pass is a mandatory data. Its a facebook access token for *I Owe YOU!* application.
-### Login [GET]
+### Action [POST]
 + Request
 
     + Body
@@ -53,6 +53,8 @@ The Entry resource has the following attributes:
 - lender_username
 
 ## Entries Collection [/entries{?contractor}{?from}{?to}{?limit}{?name}{?offset}{?status}]  
+
+### List [GET]
 + Parameters
     + contractor (optional, integer) ... user id
     + from (optional, timestamp) ... date from
@@ -62,7 +64,6 @@ The Entry resource has the following attributes:
     + status (optional, string) ... status of entry
     + to (optional, timestamp) ... date to
     
-### Fetch [GET]
 + Request
 
     + Headers
@@ -111,55 +112,9 @@ The Entry resource has the following attributes:
                 lender_username: 'lender'
             }
         ]
-     
-## Entries Collection [/entries/summary{?contractor}{?from}{?to}{?limit}{?name}{?offset}{?status}]  
-+ Parameters
-    + contractor (optional, integer) ... user id
-    + from (optional, timestamp) ... date from
-    + limit (optional, integer) ... limit of entries to fetch
-    + name (optional, string) ... part of the name
-    + offset (optional, string) ... offset
-    + status (optional, string) ... status of entry
-    + to (optional, timestamp) ... date to
-    
-### Summary [GET]
-+ Request
-
-    + Headers
-        
-            Authorization: 19f036e9-8ff3-4cff-895c-d763757754d6
-            
-+ Response 200 (application/json)
-
-        {
-            "summary": 12312, 
-        }
-
-## Entries Collection [/entries/count{?contractor}{?from}{?to}{?limit}{?name}{?offset}{?status}]  
-+ Parameters
-    + contractor (optional, integer) ... user id
-    + from (optional, timestamp) ... date from
-    + limit (optional, integer) ... limit of entries to fetch
-    + name (optional, string) ... part of the name
-    + offset (optional, string) ... offset
-    + status (optional, string) ... status of entry
-    + to (optional, timestamp) ... date to
-    
-### Count [GET]
-+ Request
-
-    + Headers
-        
-            Authorization: 19f036e9-8ff3-4cff-895c-d763757754d6
-            
-+ Response 200 (application/json)
-
-        {
-            "aggregate": 12312, 
-        }
-        
-## Entry [/entries]      
+   
 ### Create [POST]
+
 + Request
 
     + Headers
@@ -181,15 +136,60 @@ The Entry resource has the following attributes:
         {
             "isCreated": 1
         }
- 
-     
+        
+## Entries Summary [/entries/summary{?contractor}{?from}{?to}{?limit}{?name}{?offset}{?status}]  
++ Parameters
+    + contractor (optional, integer) ... user id
+    + from (optional, timestamp) ... date from
+    + limit (optional, integer) ... limit of entries to fetch
+    + name (optional, string) ... part of the name
+    + offset (optional, string) ... offset
+    + status (optional, string) ... status of entry
+    + to (optional, timestamp) ... date to
+    
+### Retrieve [GET]
++ Request
+
+    + Headers
+        
+            Authorization: 19f036e9-8ff3-4cff-895c-d763757754d6
+            
++ Response 200 (application/json)
+
+        {
+            "summary": 12312, 
+        }
+
+## Entries Count [/entries/count{?contractor}{?from}{?to}{?limit}{?name}{?offset}{?status}]  
++ Parameters
+    + contractor (optional, integer) ... user id
+    + from (optional, timestamp) ... date from
+    + limit (optional, integer) ... limit of entries to fetch
+    + name (optional, string) ... part of the name
+    + offset (optional, string) ... offset
+    + status (optional, string) ... status of entry
+    + to (optional, timestamp) ... date to
+    
+### Retrieve [GET]
++ Request
+
+    + Headers
+        
+            Authorization: 19f036e9-8ff3-4cff-895c-d763757754d6
+            
++ Response 200 (application/json)
+
+        {
+            "aggregate": 12312, 
+        }
+
 ## Entry [/entry/{id}]
 
 + Parameters
 
     + id (integer) ... ID of the Entry.
     
-### Fetch [GET]
+### Retrieve [GET]
 + Request
 
     + Headers
@@ -218,7 +218,7 @@ The Entry resource has the following attributes:
             "lender_username": 'lender'
         }
 
-### Modify [PUT]
+### Modify [PATCH]
 + Request (application/json)
 
     + Headers
@@ -256,8 +256,8 @@ The Entry resource has the following attributes:
         }
       
       
-## Entry [/entry/accept/{id}]
-### Accept [POST]
+## Entry Accept [/entry/accept/{id}]
+### Action [POST]
 + Request
 
     + Headers
@@ -271,8 +271,8 @@ The Entry resource has the following attributes:
           "isModified": 1
         }
 
-## Entry [/entry/reject/{id}]
-### Reject [POST]
+## Entry Reject [/entry/reject/{id}]
+### Action [POST]
 + Request
 
     + Headers
@@ -290,7 +290,7 @@ The Entry resource has the following attributes:
 
 ## Friends [/user/friends]  
 
-### Fetch [GET]
+### Retrieve list of user that has relationship to [GET]
 + Request
 
     + Headers
@@ -338,7 +338,7 @@ The Entry resource has the following attributes:
         
 ## User [/user/{id}]  
 
-### Fetch [GET]
+### Retrieve single user [GET]
 + Request
 
     + Headers
