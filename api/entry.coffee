@@ -7,6 +7,7 @@ userFriendshipTable = require '../models/userFriendship'
 userManager = require '../managers/user'
 clientTable = require '../models/userClient'
 session = require '../models/session'
+emiter = require '../lib/eventEmiter'
 
 
 module.exports = (app) ->
@@ -138,35 +139,34 @@ create = (req, res) ->
     description = req.body.description
     value = req.body.value / (contractors.length + parseInt(req.body.includeMe))
 
-    userFriendshipTable.friendshipsExists userId, contractors, (exists) ->
-      if exists
-        for contractor in contractors
-          userTable.getById contractor, (dbContractor) =>
-            if dbContractor
-              values =
-                name: name
-                description: description
-                value: value
-                status: 0
-                lender_id: userId
-                debtor_id: dbContractor.id
-                created_at: moment().format('YYYY-MM-DD HH:mm:ss')
-                updated_at: moment().format('YYYY-MM-DD HH:mm:ss')
+    userTable.getById userId, (user) ->
+      userFriendshipTable.friendshipsExists userId, contractors, (exists) ->
+        if exists
+          for contractor in contractors
+            userTable.getById contractor, (dbContractor) =>
+              if dbContractor
+                values =
+                  name: name
+                  description: description
+                  value: value
+                  status: 0
+                  lender_id: userId
+                  debtor_id: dbContractor.id
+                  created_at: moment().format('YYYY-MM-DD HH:mm:ss')
+                  updated_at: moment().format('YYYY-MM-DD HH:mm:ss')
 
-              entryTable.create values, (error, entry)->
-                if error
-                  res.status(404).send()
-                else
-                  session.getUserData userId, (user) ->
+                entryTable.create values, (error, entry)->
+                  if error
+                    res.status(404).send()
+                  else
                     subject = "#{user.first_name} #{user.last_name} add dept to you."
 
-                    clientTable.getByUserId dbContractor.id, (error, client)->
-                      if client
-                        res.apn.createMessage()
-                          .device(client.token)
-                          .alert(subject)
-                          .set('entryId', entryId)
-                          .send()
+                    event =
+                      subject: subject
+                      userId: dbContractor.id
+                      entryId: entry
+
+                    emiter.emit 'entryCreation', event
 
                     res.mailer.send 'mails/creatingConfirmation', {
                       to: dbContractor.email,
@@ -177,12 +177,12 @@ create = (req, res) ->
                       contractor: user
                     }, (error) ->
 
-            else
-              res.status(404).send()
+              else
+                res.status(404).send()
 
-          res.status(201).send {isCreated: true}
-      else
-        res.status(404).send()
+            res.status(201).send {isCreated: true}
+        else
+          res.status(404).send()
 
 
 accept = (req, res) ->
@@ -204,12 +204,12 @@ accept = (req, res) ->
               userTable.getById entry.debtor_id, (debtor)->
                 subject = "#{debtor.first_name} #{debtor.last_name} accepted your entry."
 
-                clientTable.getByUserId entry.lender_id, (error, client)->
-                  if client
-                    res.apn.createMessage()
-                      .device(client.token)
-                      .alert(subject)
-                      .send()
+                event =
+                  subject: subject
+                  userId: entry.lender_id
+                  entryId: entryId
+
+                emiter.emit 'entryAcceptance', event
 
                 res.mailer.send 'mails/acceptance', {
                   to: lender.email,
@@ -240,12 +240,12 @@ reject = (req, res) ->
 
               subject = "#{debtor.first_name} #{debtor.last_name} rejected your entry."
 
-              clientTable.getByUserId debtor.id, (error, client)->
-                if client
-                  res.apn.createMessage()
-                    .device(client.token)
-                    .alert(subject)
-                    .send()
+              event =
+                subject: subject
+                userId: debtor.id
+                entryId: entryId
+
+              emiter.emit 'entryRejection', event
 
               res.mailer.send 'mails/rejection', {
                 to: lender.email,
@@ -310,12 +310,12 @@ modify = (req, res) ->
 
                 subject = "#{lender.first_name} #{lender.last_name} modified entry."
 
-                clientTable.getByUserId debtor.id, (error, client)->
-                  if client
-                    res.apn.createMessage()
-                      .device(client.token)
-                      .alert(subject)
-                      .send()
+                event =
+                  subject: subject
+                  userId: debtor.id
+                  entryId: entryId
+
+                emiter.emit 'entryRejection', event
 
                 res.mailer.send 'mails/modification', {
                   to: debtor.email,

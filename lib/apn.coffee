@@ -1,19 +1,15 @@
 apnagent = require 'apnagent'
 join = require('path').join
+config = require '../config'
 pfx = join __dirname, '../certificates/IOweYOUDevelopmentPushCertificate.p12'
 
-module.exports =
-  extend: (app, config) ->
-    extend(app, config)
-
-
-extend = (app, config) ->
+module.exports = () ->
   agent = new apnagent.Agent()
   agent
     .set('pfx file', pfx)
-    .set('expires', config.expiration)
-    .set('reconnect delay', config.reconnectDelay)
-    .set('cache ttl', config.cacheTTL)
+    .set('expires', config.apn.expiration)
+    .set('reconnect delay', config.apn.reconnectDelay)
+    .set('cache ttl', config.apn.cacheTTL)
 
   agent.enable('sandbox')
 
@@ -29,10 +25,6 @@ extend = (app, config) ->
 
     console.log "APN running on #{config.env}."
 
-  app.use (req, res, next) ->
-    res.apn = agent;
-    next()
-
-  app.apn = agent;
+  return agent
 
 

@@ -18,10 +18,11 @@ app.use expressValidator({
 
 mailer.extend app, config.mailer
 
-if config.apn.env in ["prod", "dev"]
-  apn.extend app, config.apn
-
+#Controllers
 require('./api/entry')(app)
 require('./api/auth')(app)
 require('./api/user')(app)
 require('./api/userClient')(app)
+
+#Events
+require('./event/applePushNotificationsSubscriber')()
