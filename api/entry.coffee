@@ -206,7 +206,7 @@ accept = (req, res) ->
 
                 event =
                   subject: subject
-                  userId: entry.lender_id
+                  userId: lender.id
                   entryId: entryId
 
                 emiter.emit 'entryAcceptance', event
@@ -242,7 +242,7 @@ reject = (req, res) ->
 
               event =
                 subject: subject
-                userId: debtor.id
+                userId: lender.id
                 entryId: entryId
 
               emiter.emit 'entryRejection', event
