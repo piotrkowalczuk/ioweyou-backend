@@ -2,7 +2,7 @@ express = require 'express'
 config = require './config'
 expressValidator = require 'express-validator'
 mailer = require 'express-mailer'
-apn = require './lib/apn'
+apn = require('./lib/apn').apn
 validator = require './lib/validator'
 
 

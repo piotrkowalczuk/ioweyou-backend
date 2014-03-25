@@ -1,6 +1,6 @@
 emiter = require '../lib/eventEmiter'
 clientTable = require '../models/userClient'
-apn = require '../lib/apn'
+apn = require('../lib/apn').apn
 
 module.exports = () ->
   emiter.on 'entryCreation', pushNotificationHandler

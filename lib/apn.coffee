@@ -3,7 +3,7 @@ join = require('path').join
 config = require '../config'
 pfx = join __dirname, '../certificates/IOweYOUDevelopmentPushCertificate.p12'
 
-module.exports = () ->
+CreateAgent = () ->
   agent = new apnagent.Agent()
   agent
     .set('pfx file', pfx)
@@ -23,8 +23,8 @@ module.exports = () ->
     else if err
       throw err
 
-    console.log "APN running on #{config.env}."
+    console.log "APN running on #{config.apn.env}."
 
   return agent
 
-
+apn = exports.apn = CreateAgent()
