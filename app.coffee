@@ -2,7 +2,6 @@ express = require 'express'
 config = require './config'
 expressValidator = require 'express-validator'
 mailer = require 'express-mailer'
-apn = require('./lib/apn').apn
 validator = require './lib/validator'
 
 
@@ -24,5 +23,8 @@ require('./api/auth')(app)
 require('./api/user')(app)
 require('./api/userClient')(app)
 
-#Events
-require('./event/applePushNotificationsSubscriber')()
+if config.apn.env in ["prod", "dev"]
+  apn = require('./lib/apn').apn
+  
+  #Events
+  require('./event/applePushNotificationsSubscriber')()
