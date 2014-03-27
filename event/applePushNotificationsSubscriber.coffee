@@ -1,5 +1,6 @@
 emiter = require '../lib/eventEmiter'
 clientTable = require '../models/userClient'
+entryTable = require '../models/entry'
 apn = require('../lib/apn').apn
 
 module.exports = () ->
@@ -11,8 +12,13 @@ module.exports = () ->
 pushNotificationHandler = (data) ->
   clientTable.getByUserId data.userId, (error, client)->
     if client
-      apn.createMessage()
-        .device(client.token)
-        .alert(data.subject)
-        .set('entryId', data.entryId)
-        .send()
+      filter =
+        status: 0
+
+      entryTable.getCount data.userId, filter, (error, nbOfOpenEntries) ->
+        apn.createMessage()
+          .device(client.token)
+          .alert(data.subject)
+          .set('entryId', data.entryId)
+          .badge(nbOfOpenEntries)
+          .send()
