@@ -12,10 +12,7 @@ module.exports = () ->
 pushNotificationHandler = (data) ->
   clientTable.getByUserId data.userId, (error, client)->
     if client
-      filters =
-        status: 0
-
-      entryTable.getCount data.userId, filters, (error, nbOfOpenEntries) ->
+      entryTable.getNbOfEntriesWaitingForAcceptance data.userId, (error, nbOfOpenEntries) ->
         apn.createMessage()
           .device(client.token)
           .alert(data.subject)

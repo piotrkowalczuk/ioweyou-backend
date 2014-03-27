@@ -11,7 +11,9 @@ module.exports =
   getSummary: (userId, filters, next) ->
     getSummary(userId, filters, next)
   getCount: (userId, filters, next) ->
-    getCount(userId, filters, next)
+    getCount(userId, filters)
+  getNbOfEntriesWaitingForAcceptance: (userId, next) ->
+    getNbOfEntriesWaitingForAcceptance(userId, next)
   create: (fields, next) ->
     create(fields, next)
   modify: (userId, entryId, fields, next) ->
@@ -72,6 +74,18 @@ getUserEntryById = (userId, entryId, next) ->
     .where (sub) ->
       sub.where('debtor.id', userId)
       .orWhere('lender.id', userId)
+    .exec (error, reply) ->
+      if error
+        next(error, null)
+      else
+        next(null, reply[0])
+
+getNbOfEntriesWaitingForAcceptance = (userId, next) ->
+  db.postgres()
+    .from('entry')
+    .count('id')
+    .where('status', '=', 0)
+    .where('debtor_id', '=', userId)
     .exec (error, reply) ->
       if error
         next(error, null)

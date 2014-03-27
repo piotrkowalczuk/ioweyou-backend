@@ -175,3 +175,21 @@ describe 'model/entry', ()->
         expectedValue = 105
         expect(summary).to.eql(expectedValue.toFixed(2))
         done()
+
+  describe 'getNbOfEntriesWaitingForAcceptance', ()->
+
+    beforeEach (done)->
+      clearDatabase.exec (error, result) ->
+        syncDatabase.exec (error, result) ->
+          fixturesDatabase.load '/test/model/entry_fixtures/getNbOfEntriesWaitingForAcceptance.json', (error, result)->
+            done()
+
+    it "should return no 0 for user#1", (done)->
+      entryTable.getNbOfEntriesWaitingForAcceptance 1, (error, nbOfEntries)->
+        expect(nbOfEntries.aggregate).to.eql('0')
+        done()
+
+    it "should return no 3 for user#2", (done)->
+      entryTable.getNbOfEntriesWaitingForAcceptance 2, (error, nbOfEntries)->
+        expect(nbOfEntries.aggregate).to.eql('3')
+        done()
