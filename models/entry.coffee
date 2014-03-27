@@ -98,7 +98,7 @@ getCount = (userId, filters, next) ->
       sub.where('debtor_id', filters.contractor)
         .orWhere('lender_id', filters.contractor)
 
-  if filters.status
+  if filters.status?
     query.where('status', '=', filters.status)
 
   if filters.name
@@ -131,7 +131,7 @@ getAll = (userId, filters, next) ->
       sub.where('debtor_id', filters.contractor)
         .orWhere('lender_id', filters.contractor)
 
-  if filters.status
+  if filters.status?
     query.where('status', '=', filters.status)
 
   if filters.name
@@ -160,7 +160,7 @@ getSummary = (userId, filters, next) ->
       sub.where('debtor_id', filters.contractor)
         .orWhere('lender_id', filters.contractor)
 
-  if filters.status
+  if filters.status?
     query.where('status', '=', filters.status)
 
   if filters.name
