@@ -1,4 +1,4 @@
-I Owe YOU! (backend)
+I Owe YOU! (back end)
 ===============
 
 I Owe YOU! is an app that is used to track the debts. Based on Node.js (Express Framework), and Postgres/Redis databases.
